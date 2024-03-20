@@ -1,5 +1,5 @@
 import 'package:finflow/color.dart';
-import 'package:finflow/payment.dart';
+import 'package:finflow/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Payment(),
+                              builder: (context) => const Screens(),
                             ));
                       }
                       pageController.nextPage(
@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             BoxShadow(
                                 color: darkgrey,
                                 blurRadius: 8,
-                                offset: Offset(0, 8))
+                                offset: const Offset(0, 8))
                           ],
                           color: blue,
                           borderRadius:

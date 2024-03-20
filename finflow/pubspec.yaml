@@ -72,6 +72,8 @@ flutter:
     - images/secure.svg
     - images/visa.png
     - images/Card.jpg
+    - images/Card2.jpg
+    - images/Card3.jpg
     - images/virtualAssistant.png
   #   - images/a_dot_ham.jpeg
 
