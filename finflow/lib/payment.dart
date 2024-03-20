@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:finflow/color.dart';
+import 'package:finflow/seeall.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -28,10 +29,12 @@ class _PaymentState extends State<Payment> {
     Icons.medical_services_rounded: {'Assurance': Colors.green},
     FontAwesomeIcons.bagShopping: {'Shopping': Colors.orangeAccent},
     Boxicons.bxs_discount: {'Deals': Colors.pinkAccent},
+    FontAwesomeIcons.cartShopping: {'Merchant': Colors.deepPurple},
     FontAwesomeIcons.shieldHeart: {'Health': Colors.lightGreen},
     FontAwesomeIcons.mobile: {'Moblie': Colors.lightBlueAccent},
     FontAwesomeIcons.motorcycle: {'Motor': Colors.brown},
     FontAwesomeIcons.car: {'Car': Colors.blueGrey},
+    Boxicons.bxs_tv: {'Television': const Color.fromARGB(255, 33, 61, 243)},
   };
   bool seeall = false;
   Color? iconcolor;
@@ -90,18 +93,22 @@ class _PaymentState extends State<Payment> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Good Morning',
-                                        style: TextStyle(
-                                            fontFamily: 'Century',
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600)),
-                                    Text('Andrew Anuewwww',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontFamily: 'Century',
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w800)),
+                                    Text(
+                                      'Good Morning',
+                                      style: TextStyle(
+                                          fontFamily: 'Century',
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      'Andrew Anuewwww',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontFamily: 'Century',
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w800),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -383,13 +390,22 @@ class _PaymentState extends State<Payment> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 const Spacer(),
-                                Text(
-                                  'See all',
-                                  style: TextStyle(
-                                      fontFamily: 'Century',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: lightblue),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const SeeAll(),
+                                        ));
+                                  },
+                                  child: Text(
+                                    'See all',
+                                    style: TextStyle(
+                                        fontFamily: 'Century',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: lightblue),
+                                  ),
                                 ),
                               ],
                             ),
