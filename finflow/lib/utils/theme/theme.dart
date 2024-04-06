@@ -1,5 +1,5 @@
-import 'package:finflow/colors.dart';
-import 'package:finflow/text_theme.dart';
+import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 
 class TAppTheme {

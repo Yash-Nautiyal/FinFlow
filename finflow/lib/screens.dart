@@ -1,7 +1,8 @@
-import 'package:finflow/chat.dart';
-import 'package:finflow/home.dart';
-import 'package:finflow/profile.dart';
-import 'package:finflow/scan.dart';
+import 'package:finflow/pages/chat.dart';
+import 'package:finflow/pages/home.dart';
+import 'package:finflow/pages/profile.dart';
+import 'package:finflow/pages/scan.dart';
+import 'package:finflow/pages/transfer.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
@@ -52,7 +53,7 @@ class _ScreensState extends State<Screens> {
               currentIndex = index;
             });
           },
-          children: const [Home(), Profile(email: 'email')],
+          children: const [Home(), Transfer(), Profile(email: 'email')],
         ),
         floatingActionButton: currentIndex != 0
             ? const SizedBox.shrink()
@@ -104,7 +105,7 @@ class _ScreensState extends State<Screens> {
                               _onBottomNavBarTapped(0);
                             },
                             icon: const Icon(
-                              Boxicons.bxs_home,
+                              Boxicons.bx_home,
                               size: 27,
                             ),
                           ),
@@ -112,9 +113,11 @@ class _ScreensState extends State<Screens> {
                             style: const ButtonStyle(
                                 side: MaterialStatePropertyAll(
                                     BorderSide(style: BorderStyle.none))),
-                            onPressed: () {},
+                            onPressed: () {
+                              _onBottomNavBarTapped(1);
+                            },
                             icon: const Icon(
-                              Boxicons.bx_chart,
+                              Boxicons.bxl_telegram,
                               size: 27,
                             ),
                           ),
@@ -162,10 +165,10 @@ class _ScreensState extends State<Screens> {
                                 side: MaterialStatePropertyAll(
                                     BorderSide(style: BorderStyle.none))),
                             onPressed: () {
-                              _onBottomNavBarTapped(1);
+                              _onBottomNavBarTapped(2);
                             },
                             icon: const Icon(
-                              Boxicons.bx_credit_card,
+                              Boxicons.bx_chart,
                               size: 27,
                             ),
                           ),

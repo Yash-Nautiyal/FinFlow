@@ -1,6 +1,10 @@
-import 'package:finflow/colors.dart';
+import 'package:finflow/utils/controllers/Add_controller.dart';
+import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/user_model.dart';
+import 'package:finflow/utils/creditcard/glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:get/get.dart';
 
 class CreditCard extends StatefulWidget {
   const CreditCard({super.key});
@@ -39,7 +43,8 @@ class _CreditCardState extends State<CreditCard> {
           return Container(
             decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('images/Card.jpg'), fit: BoxFit.cover)),
+                    image: AssetImage('images/card/Card.jpg'),
+                    fit: BoxFit.cover)),
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,7 +59,6 @@ class _CreditCardState extends State<CreditCard> {
                   ),
                   CreditCardWidget(
                     enableFloatingCard: useFloatingAnimation,
-                    glassmorphismConfig: _getGlassmorphismConfig(),
                     cardNumber: cardNumber,
                     expiryDate: expiryDate,
                     cardHolderName: cardHolderName,
@@ -72,7 +76,7 @@ class _CreditCardState extends State<CreditCard> {
                     cardBgColor: isLightTheme
                         ? AppColors.cardBgLightColor
                         : AppColors.cardBgColor,
-                    backgroundImage: 'images/Card.jpg',
+                    backgroundImage: 'images/card/Card.jpg',
                     isSwipeGestureEnabled: true,
                     onCreditCardWidgetChange:
                         (CreditCardBrand creditCardBrand) {},
@@ -164,54 +168,26 @@ class _CreditCardState extends State<CreditCard> {
                             onCreditCardModelChange: onCreditCardModelChange,
                           ),
                           const SizedBox(height: 20),
-                          /* GestureDetector(
-                            onTap: _onValidate,
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: <Color>[
-                                    AppColors.colorB58D67,
-                                    AppColors.colorB58D67,
-                                    AppColors.colorE5D1B2,
-                                    AppColors.colorF9EED2,
-                                    AppColors.colorEFEFED,
-                                    AppColors.colorF9EED2,
-                                    AppColors.colorB58D67,
-                                  ],
-                                  begin: Alignment(-1, -4),
-                                  end: Alignment(1, 4),
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              alignment: Alignment.center,
-                              child: isvalid
-                                  ? Icon(
-                                      FontAwesomeIcons.check,
-                                      color: green,
-                                    )
-                                  : const Text(
-                                      'Validate',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'halter',
-                                        fontSize: 14,
-                                        package: 'flutter_credit_card',
-                                      ),
-                                    ),
-                            ),
-                          ), */
                           const SizedBox(
                             height: 10,
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              final user = UserModal(
+                                  fullname: cardHolderName.toString().trim(),
+                                  cardnumber: cardNumber.toString().trim(),
+                                  cvv: cvvCode.toString().trim(),
+                                  expdate: expiryDate.toString().trim());
+
+                              final add = Get.put(AddController());
+                              add.addDetails(
+                                  user,
+                                  (cardHolderName +
+                                          cardNumber.removeAllWhitespace)
+                                      .toString()
+                                      .trim());
+                              Navigator.pop(context);
+                            },
                             child: Container(
                               width: 200,
                               decoration: BoxDecoration(
@@ -251,23 +227,6 @@ class _CreditCardState extends State<CreditCard> {
         isvalid = false;
       });
     }
-  }
-
-  Glassmorphism? _getGlassmorphismConfig() {
-    if (!useGlassMorphism) {
-      return null;
-    }
-
-    final LinearGradient gradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: <Color>[Colors.grey.withAlpha(50), Colors.grey.withAlpha(50)],
-      stops: const <double>[0.3, 0],
-    );
-
-    return isLightTheme
-        ? Glassmorphism(blurX: 8.0, blurY: 16.0, gradient: gradient)
-        : Glassmorphism.defaultConfig();
   }
 
   void onCreditCardModelChange(CreditCardModel creditCardModel) {

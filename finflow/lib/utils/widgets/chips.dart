@@ -1,4 +1,4 @@
-import 'package:finflow/colors.dart';
+import 'package:finflow/utils/Colors/colors.dart';
 import 'package:flutter/material.dart';
 
 class ListOfChips extends StatefulWidget {
