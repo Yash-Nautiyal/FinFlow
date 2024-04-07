@@ -130,9 +130,11 @@ class _MyVerifyState extends State<MyVerify> {
                         MyVerify.userUid = userid;
                         saveData('UserID', userid);
                         final user = UserModal2(
-                            firstname: LoginPage.fn.toString().trim(),
-                            lastname: LoginPage.ln.toString().trim(),
-                            email: LoginPage.email.toString().trim());
+                          firstname: LoginPage.fn.toString().trim(),
+                          lastname: LoginPage.ln.toString().trim(),
+                          email: LoginPage.email.toString().trim(),
+                          phno: MyPhone.phno.toString().trim(),
+                        );
 
                         final add = Get.put(AddController());
                         add.addUser(user, userid);

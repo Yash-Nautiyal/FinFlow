@@ -2,6 +2,7 @@ import 'package:finflow/pages/login/phone.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,15 +29,6 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
 //Heading-----------------------------------------------------------------------
 
-        appBar: AppBar(
-          backgroundColor: purple,
-          centerTitle: true,
-          title: Text(
-            'Sign in',
-            style: textTheme.displayMedium!
-                .copyWith(color: Colors.white, fontSize: 25),
-          ),
-        ),
         resizeToAvoidBottomInset: false,
         body: SizedBox(
           width: screenWidth,
@@ -47,74 +39,126 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Enter your Details',
-                      style: textTheme.displayMedium!.copyWith(fontSize: 15)),
+                  SizedBox(
+                    height: screenHeight * .3,
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: SvgPicture.asset(
+                          "images/signup.svg",
+                          fit: BoxFit.contain,
+                        )),
+                      ],
+                    ),
+                  ),
 
                   //Input Email-------------------------------------------------------------------
 
-                  Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.045),
-                    child: TextField(
-                      keyboardType: TextInputType.name,
-                      controller: firstname,
-                      onChanged: (value) {
-                        LoginPage.fn = value;
-                      },
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'First Name',
-                        hintStyle:
-                            textTheme.displaySmall!.copyWith(fontSize: 17),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                  Column(
+                    children: [
+                      Text('Sign Up',
+                          style: textTheme.displayMedium!.copyWith(
+                              fontSize: 25, fontWeight: FontWeight.bold)),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('Enter the Details',
+                            style: textTheme.displayMedium!.copyWith(
+                                fontSize: 15, fontWeight: FontWeight.w600)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenHeight * 0.015),
+                        child: TextField(
+                          keyboardType: TextInputType.name,
+                          controller: firstname,
+                          onChanged: (value) {
+                            LoginPage.fn = value;
+                          },
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          style: textTheme.displaySmall!.copyWith(fontSize: 17),
+                          decoration: InputDecoration(
+                            hintText: 'First Name',
+                            filled: true,
+                            hintStyle:
+                                textTheme.displaySmall!.copyWith(fontSize: 15),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: purple),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.045),
-                    child: TextField(
-                      keyboardType: TextInputType.name,
-                      controller: lastname,
-                      onChanged: (value) {
-                        LoginPage.ln = value;
-                      },
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Last Name',
-                        hintStyle:
-                            textTheme.displaySmall!.copyWith(fontSize: 17),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenHeight * 0.025),
+                        child: TextField(
+                          style: textTheme.displaySmall!.copyWith(fontSize: 17),
+                          keyboardType: TextInputType.name,
+                          controller: lastname,
+                          onChanged: (value) {
+                            LoginPage.ln = value;
+                          },
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            hintText: 'Last Name',
+                            hintStyle:
+                                textTheme.displaySmall!.copyWith(fontSize: 15),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: purple),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.045),
-                    child: TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      controller: email,
-                      onChanged: (value) {
-                        LoginPage.email = value;
-                      },
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Email',
-                        hintStyle:
-                            textTheme.displaySmall!.copyWith(fontSize: 17),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: white),
-                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenHeight * 0.025),
+                        child: TextField(
+                          style: textTheme.displaySmall!.copyWith(fontSize: 17),
+                          keyboardType: TextInputType.emailAddress,
+                          controller: email,
+                          onChanged: (value) {
+                            LoginPage.email = value;
+                          },
+                          onTapOutside: (event) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            hintText: 'Email',
+                            hintStyle:
+                                textTheme.displaySmall!.copyWith(fontSize: 15),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: purple),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13)),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
 
                   SizedBox(
@@ -128,7 +172,6 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(10))),
                       onPressed: () async {
                         String? userId = await retrieveData('UserID');
-
                         // Print the retrieved data
                         print(userId);
                         Navigator.push(context,

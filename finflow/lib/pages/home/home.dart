@@ -46,10 +46,6 @@ class HomeState extends State<Home> {
     Colors.greenAccent,
     Colors.blueAccent,
     Colors.amberAccent,
-    /* Colors.pinkAccent,
-    Colors.limeAccent,
-    Colors.orangeAccent,
-    Colors.cyanAccent, */
   ];
   int totalgroups = 10;
   bool viewall = false;
@@ -74,18 +70,26 @@ class HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0)
                         .copyWith(top: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Text(
-                          'Welcome Back',
-                          style:
-                              textTheme.displayMedium!.copyWith(fontSize: 15),
+                        CircleAvatar(),
+                        const SizedBox(
+                          width: 9,
                         ),
-                        Text(
-                          'Johnny Jibs',
-                          style: textTheme.displayMedium!.copyWith(
-                              fontSize: 25, fontWeight: FontWeight.w600),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome Back',
+                              style: textTheme.displayMedium!
+                                  .copyWith(fontSize: 15),
+                            ),
+                            Text(
+                              'Johnny Jibs',
+                              style: textTheme.displayMedium!.copyWith(
+                                  fontSize: 25, fontWeight: FontWeight.w600),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -418,22 +422,10 @@ class HomeState extends State<Home> {
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               } else {
-                /* Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                    (route) => false); */
-                return SizedBox();
+                return const SizedBox();
               }
             } else {
-              /* Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                  (route) => false); */
-              return SizedBox();
+              return const SizedBox();
             }
           },
         ));

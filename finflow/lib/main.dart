@@ -25,7 +25,7 @@ class Myapp extends StatelessWidget {
         darkTheme: TAppTheme.darkTheme,
         themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
-        home: const SplashScreen(),
+        home: const Screens(),
       ),
     );
   }
@@ -58,20 +58,16 @@ class _SplashScreenState extends State<SplashScreen> {
                   if (snapshot.hasData) {
                     final userData = snapshot.data;
                     if (userData != null && userData.exists) {
-                      // Document exists, navigate to Screens
-                      return Screens();
+                      return const Screens();
                     } else {
-                      // Document doesn't exist, navigate to LoginPage
-                      return LoginPage();
+                      return const LoginPage();
                     }
                   } else {
-                    // Show loading indicator while waiting for data
-                    return Scaffold(
+                    return const Scaffold(
                         body: Center(child: CircularProgressIndicator()));
                   }
                 } else {
-                  // Show loading indicator while waiting for data
-                  return Scaffold(
+                  return const Scaffold(
                       body: Center(child: CircularProgressIndicator()));
                 }
               },

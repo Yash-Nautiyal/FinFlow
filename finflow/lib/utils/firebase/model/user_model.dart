@@ -39,12 +39,14 @@ class UserModal2 {
   final String firstname;
   final String lastname;
   final String email;
+  final String phno;
 
   const UserModal2({
     this.id,
     required this.firstname,
     required this.lastname,
     required this.email,
+    required this.phno,
   });
 
   toJson() {
@@ -52,6 +54,7 @@ class UserModal2 {
       "FirstName": firstname,
       "LastName": lastname,
       "Email": email,
+      "PhoneNumber": phno,
     };
   }
 
@@ -59,10 +62,10 @@ class UserModal2 {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return UserModal2(
-      firstname: data["FirstName"],
-      lastname: data["LastName"],
-      email: data["Email"],
-    );
+        firstname: data["FirstName"],
+        lastname: data["LastName"],
+        email: data["Email"],
+        phno: data["PhoneNumber"]);
   }
 }
 

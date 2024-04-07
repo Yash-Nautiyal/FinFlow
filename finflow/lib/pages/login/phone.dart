@@ -6,6 +6,7 @@ class MyPhone extends StatefulWidget {
   const MyPhone({Key? key}) : super(key: key);
 
   static String verify = "";
+  static String phno = "";
 
   @override
   State<MyPhone> createState() => _MyPhoneState();
@@ -109,6 +110,7 @@ class _MyPhoneState extends State<MyPhone> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
+                      MyPhone.phno = '${countryController.text + phone}';
                       await FirebaseAuth.instance.verifyPhoneNumber(
                         phoneNumber: '${countryController.text + phone}',
                         verificationCompleted:
