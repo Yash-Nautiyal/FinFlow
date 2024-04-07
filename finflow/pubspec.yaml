@@ -56,7 +56,8 @@ dependencies:
   firebase_auth: ^4.17.8
   get: ^4.6.6
   pinput: ^4.0.0
-  
+  shared_preferences: ^2.0.6
+  local_auth: ^2.2.0  
 
 
 dev_dependencies:

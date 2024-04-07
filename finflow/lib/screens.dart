@@ -1,8 +1,8 @@
-import 'package:finflow/pages/chat.dart';
-import 'package:finflow/pages/home.dart';
-import 'package:finflow/pages/profile.dart';
-import 'package:finflow/pages/scan.dart';
-import 'package:finflow/pages/transfer.dart';
+import 'package:finflow/pages/chat/chat.dart';
+import 'package:finflow/pages/home/home.dart';
+import 'package:finflow/pages/profile/profile.dart';
+import 'package:finflow/pages/scanner/scan.dart';
+import 'package:finflow/pages/stats/stats_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
@@ -53,7 +53,7 @@ class _ScreensState extends State<Screens> {
               currentIndex = index;
             });
           },
-          children: const [Home(), Transfer(), Profile(email: 'email')],
+          children: const [Home(), Statistics(), Profile(email: 'email')],
         ),
         floatingActionButton: currentIndex != 0
             ? const SizedBox.shrink()

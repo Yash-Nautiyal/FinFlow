@@ -25,14 +25,14 @@ class AppColors {
   static const Color contentColorCyan = Color(0xFF50E4FF);
 }
 
-class Transfer extends StatefulWidget {
-  const Transfer({super.key});
+class LineChartSample extends StatefulWidget {
+  const LineChartSample({super.key});
 
   @override
-  State<Transfer> createState() => _TransferState();
+  State<LineChartSample> createState() => _LineChartSampleState();
 }
 
-class _TransferState extends State<Transfer> {
+class _LineChartSampleState extends State<LineChartSample> {
   List<Color> gradientColors = [
     AppColors.contentColorCyan,
     AppColors.contentColorBlue,

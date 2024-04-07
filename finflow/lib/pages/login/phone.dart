@@ -1,4 +1,4 @@
-import 'package:finflow/pages/verify.dart';
+import 'package:finflow/pages/login/verify.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

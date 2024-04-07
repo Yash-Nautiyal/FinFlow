@@ -1,8 +1,11 @@
-import 'package:finflow/utils/widgets/chips.dart';
+import 'package:finflow/pages/home/splitgroup/chips.dart';
 import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/utils/firebase/controllers/Add_controller.dart';
+import 'package:finflow/utils/firebase/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:ken_burns_slideshow/ken_burns_slideshow.dart';
 
 class CreateGroup extends StatefulWidget {
@@ -22,6 +25,7 @@ class _CreateGroupState extends State<CreateGroup> {
     selectedFilter = [];
   }
 
+  String grpname = '';
   String kPickedNmber = '';
   String kPickedName = '';
   Map<String, String> members = {};
@@ -119,7 +123,7 @@ class _CreateGroupState extends State<CreateGroup> {
                             child: TextField(
                               controller: textEditingController,
                               onChanged: (value) {
-                                setState(() {});
+                                grpname = value;
                               },
                               onSubmitted: (value) {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -288,7 +292,15 @@ class _CreateGroupState extends State<CreateGroup> {
                     Align(
                       alignment: Alignment.center,
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          UserModal3 user = UserModal3(
+                              grpname: grpname,
+                              moto: selectedFilter[0].toString(),
+                              member: members);
+                          final add = Get.put(AddController());
+                          add.addGroup(user);
+                          Navigator.pop(context);
+                        },
                         child: Container(
                           width: 200,
                           decoration: BoxDecoration(

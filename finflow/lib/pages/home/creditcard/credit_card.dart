@@ -1,7 +1,6 @@
-import 'package:finflow/utils/controllers/Add_controller.dart';
+import 'package:finflow/utils/firebase/controllers/Add_controller.dart';
 import 'package:finflow/utils/Colors/colors.dart';
-import 'package:finflow/user_model.dart';
-import 'package:finflow/utils/creditcard/glass.dart';
+import 'package:finflow/utils/firebase/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:get/get.dart';
@@ -180,12 +179,7 @@ class _CreditCardState extends State<CreditCard> {
                                   expdate: expiryDate.toString().trim());
 
                               final add = Get.put(AddController());
-                              add.addDetails(
-                                  user,
-                                  (cardHolderName +
-                                          cardNumber.removeAllWhitespace)
-                                      .toString()
-                                      .trim());
+                              add.addDetails(user);
                               Navigator.pop(context);
                             },
                             child: Container(
