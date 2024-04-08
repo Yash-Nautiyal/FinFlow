@@ -1,3 +1,4 @@
+import 'package:finflow/pages/home/creditcard/swiper.dart';
 import 'package:finflow/pages/login/login.dart';
 import 'package:finflow/pages/login/verify.dart';
 import 'package:finflow/utils/Colors/colors.dart';
@@ -9,6 +10,8 @@ import 'package:finflow/utils/firebase/model/user_model.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter_initicon/flutter_initicon.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -72,7 +75,22 @@ class HomeState extends State<Home> {
                         .copyWith(top: 15),
                     child: Row(
                       children: [
-                        CircleAvatar(),
+                        FutureBuilder<Center>(
+                          future: username(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<Center?> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              return snapshot.data ??
+                                  Center(child: Text('No data'));
+                            }
+                          },
+                        ),
                         const SizedBox(
                           width: 9,
                         ),
@@ -116,8 +134,9 @@ class HomeState extends State<Home> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: viewall
-                          ? groupsGrid()
-                          : firstfourgroups(context, screenwidth, textTheme),
+                          ? groupsGrid(fetch, screenwidth, textTheme)
+                          : firstfourgroups(
+                              context, screenwidth, textTheme, fetch),
                     ),
                   ),
                   viewall
@@ -170,6 +189,13 @@ class HomeState extends State<Home> {
     );
   }
 
+  Future<Center> username() async {
+    final name = await retrieveData("Name");
+    return Center(
+      child: Initicon(text: name.toString()),
+    );
+  }
+
   SizedBox creditCardSwiper(double screenwidth, double screenheight,
       TextTheme textTheme, FetchController fetch) {
     return SizedBox(
@@ -190,173 +216,7 @@ class HomeState extends State<Home> {
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
 /*                         print(snapshot.data.toString());
  */
-                        return Swiper(
-                          pagination: const SwiperPagination(
-                            alignment: Alignment.bottomCenter,
-                            builder: DotSwiperPaginationBuilder(
-                              color: Color.fromARGB(255, 56, 56, 56),
-                              activeColor: Color.fromRGBO(162, 146, 246, 1),
-                            ),
-                          ),
-                          itemWidth: screenwidth - 40,
-                          viewportFraction: 0.872,
-                          scale: 0.89,
-                          itemCount: snapshot.data!.length + 1,
-                          loop: false,
-                          index: snapshot.data!.isNotEmpty ? 1 : 0,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      ModalBottomSheetRoute(
-                                          builder: (context) =>
-                                              const CreditCard(),
-                                          showDragHandle: true,
-                                          useSafeArea: true,
-                                          isScrollControlled: true));
-                                },
-                                child: Card(
-                                  color: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(15),
-                                    ),
-                                  ),
-                                  child: const Icon(FontAwesomeIcons.plus),
-                                ),
-                              );
-                            }
-                            return Card(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  image: DecorationImage(
-                                    opacity: 0.7,
-                                    image: AssetImage(cardBackground[
-                                        index]), // Use AssetImage to load the image
-                                    fit: BoxFit
-                                        .cover, // Set the fit property as required
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 20.0, horizontal: 16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                          width: 100,
-                                          height: 40,
-                                          child: Image.asset(
-                                            'images/visa-white.png',
-                                            fit: BoxFit.cover,
-                                          )),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: SizedBox(
-                                              height: 50,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: List.generate(
-                                                  3,
-                                                  (index) => SizedBox(
-                                                    width: 65,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: List.generate(
-                                                        4,
-                                                        (index) => Container(
-                                                          width: 11,
-                                                          height: 11,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  color: white,
-                                                                  shape: BoxShape
-                                                                      .circle),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              snapshot
-                                                  .data![index - 1].cardnumber
-                                                  .toString()
-                                                  .substring(snapshot
-                                                          .data![index - 1]
-                                                          .cardnumber
-                                                          .length -
-                                                      4),
-                                              style: textTheme.displayMedium!
-                                                  .copyWith(
-                                                      color: white,
-                                                      fontSize: 25,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Balance',
-                                              style: textTheme.displayMedium!
-                                                  .copyWith(
-                                                      color: white,
-                                                      fontSize: 25,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                          const Spacer(),
-                                          const Icon(FontAwesomeIcons.lock)
-                                        ],
-                                      ),
-                                      Text('\$234.12',
-                                          style: textTheme.displayMedium!
-                                              .copyWith(
-                                                  color: white,
-                                                  fontSize: 35,
-                                                  fontWeight: FontWeight.w700)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
+                        return makeSwiper(screenwidth, textTheme, snapshot);
                       } else if (snapshot.hasError) {
                         return GestureDetector(
                           onTap: () {
@@ -413,8 +273,10 @@ class HomeState extends State<Home> {
                         );
                       }
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: SpinKitDoubleBounce(
+                          color: purple,
+                        ),
                       );
                     }
                   },
@@ -499,200 +361,331 @@ class HomeState extends State<Home> {
     );
   }
 
-  AnimationLimiter groupsGrid() {
-    return AnimationLimiter(
-      child: GridView.builder(
-        itemCount: totalgroups + 1,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 7,
-          crossAxisCount: 5,
-        ),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  totalgroups++;
-                });
-              },
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      ModalBottomSheetRoute(
-                          builder: (context) => const CreateGroup(),
-                          enableDrag: true,
-                          showDragHandle: true,
-                          isScrollControlled: true));
-                },
-                child: DottedBorder(
-                  strokeWidth: 1,
-                  dashPattern: const [3, 3],
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(15),
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
-                  child: const Align(
-                    alignment: Alignment.center,
-                    child: Icon(FontAwesomeIcons.plus),
-                  ),
-                ),
-              ),
-            );
-          }
-          return index > 4
-              ? AnimationConfiguration.staggeredGrid(
-                  columnCount: 5,
-                  position: index,
-                  duration: const Duration(milliseconds: 300),
-                  child: ScaleAnimation(
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage(groupBackground[index - 1])),
-                        borderRadius: BorderRadius.circular(15),
+  FutureBuilder groupsGrid(FetchController fetchController, double screenwidth,
+      TextTheme textTheme) {
+    return FutureBuilder<String?>(
+      future: retrieveData("UserID"),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final userid = snapshot.data;
+          if (userid != null) {
+            return FutureBuilder<List<UserModal3>>(
+              future: fetchController.getallgroups("${userid}Groups"),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    return AnimationLimiter(
+                      child: GridView.builder(
+                        itemCount: snapshot.data!.length + 1,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 7,
+                          crossAxisCount: 5,
+                        ),
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    ModalBottomSheetRoute(
+                                        builder: (context) =>
+                                            const CreateGroup(),
+                                        enableDrag: true,
+                                        showDragHandle: true,
+                                        isScrollControlled: true));
+                              },
+                              child: DottedBorder(
+                                strokeWidth: 1,
+                                dashPattern: const [3, 3],
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(15),
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                child: const Align(
+                                  alignment: Alignment.center,
+                                  child: Icon(FontAwesomeIcons.plus),
+                                ),
+                              ),
+                            );
+                          }
+                          return index > 4
+                              ? AnimationConfiguration.staggeredGrid(
+                                  columnCount: 5,
+                                  position: index,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: ScaleAnimation(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: AssetImage(
+                                                groupBackground[index - 1])),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: AssetImage(
+                                            groupBackground[index - 1])),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                );
+                        },
                       ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text("${snapshot.hasError}"),
+                    );
+                  } else {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            ModalBottomSheetRoute(
+                                builder: (context) => const CreateGroup(),
+                                enableDrag: true,
+                                showDragHandle: true,
+                                isScrollControlled: true));
+                      },
+                      child: DottedBorder(
+                        strokeWidth: 1,
+                        dashPattern: const [3, 3],
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(15),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                        child: const Align(
+                          alignment: Alignment.center,
+                          child: Icon(FontAwesomeIcons.plus),
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  return Center(
+                    child: SpinKitDoubleBounce(
+                      color: purple,
                     ),
-                  ),
-                )
-              : Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage(groupBackground[index - 1])),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                );
-        },
-      ),
+                  );
+                }
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("${snapshot.hasError}"),
+            );
+          } else {
+            return SizedBox();
+          }
+        } else {
+          return Center(
+            child: SpinKitDoubleBounce(
+              color: purple,
+            ),
+          );
+        }
+      },
     );
   }
 
-  Row firstfourgroups(
-      BuildContext context, double screenwidth, TextTheme textTheme) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                ModalBottomSheetRoute(
-                    builder: (context) => const CreateGroup(),
-                    enableDrag: true,
-                    showDragHandle: true,
-                    isScrollControlled: true));
-          },
-          child: DottedBorder(
-            strokeWidth: 1,
-            dashPattern: const [3, 3],
-            borderType: BorderType.RRect,
-            radius: const Radius.circular(15),
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-            child: const SizedBox(
-              width: 55,
-              height: 55,
-              child: Icon(FontAwesomeIcons.plus),
-            ),
-          ),
-        ),
-        const SizedBox(width: 5),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(
-              4,
-              (index) {
-                final containerSize = screenwidth / 7.7;
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Group(
-                                    title: 'Trip',
-                                    bgimage: groupBackground[index],
-                                  )));
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Stack(
+  FutureBuilder firstfourgroups(BuildContext context, double screenwidth,
+      TextTheme textTheme, FetchController fetchController) {
+    return FutureBuilder(
+        future: retrieveData("UserID"),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final userid = snapshot.data;
+            if (userid != null) {
+              return FutureBuilder<List<UserModal3>>(
+                  future: fetchController.getallgroups("${userid}Groups"),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                        return Row(
                           children: [
-                            Container(
-                              width: containerSize,
-                              height: containerSize,
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: AssetImage(groupBackground[index])),
-                                borderRadius: BorderRadius.circular(15),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    ModalBottomSheetRoute(
+                                        builder: (context) =>
+                                            const CreateGroup(),
+                                        enableDrag: true,
+                                        showDragHandle: true,
+                                        isScrollControlled: true));
+                              },
+                              child: DottedBorder(
+                                strokeWidth: 1,
+                                dashPattern: const [3, 3],
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(15),
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                                child: const SizedBox(
+                                  width: 55,
+                                  height: 55,
+                                  child: Icon(FontAwesomeIcons.plus),
+                                ),
                               ),
                             ),
-                            Positioned(
-                                top: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                      color: green, shape: BoxShape.circle),
-                                ))
+                            const SizedBox(width: 5),
+                            Expanded(
+                              child: Row(
+                                children: List.generate(
+                                  snapshot.data!.length,
+                                  (index) {
+                                    final containerSize = screenwidth / 7.7;
+                                    return Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Group(
+                                                          title: snapshot
+                                                              .data![index]
+                                                              .grpname,
+                                                          bgimage:
+                                                              groupBackground[
+                                                                  index],
+                                                        )));
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Stack(
+                                                children: [
+                                                  Container(
+                                                    width: containerSize,
+                                                    height: containerSize,
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: AssetImage(
+                                                              groupBackground[
+                                                                  index])),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      top: 0,
+                                                      right: 0,
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: green,
+                                                                shape: BoxShape
+                                                                    .circle),
+                                                      ))
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 2,
+                                              ),
+                                              Text(
+                                                snapshot.data![index].grpname,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: textTheme.displaySmall!
+                                                    .copyWith(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                              ),
+                                              Text(
+                                                "Owe:\$100",
+                                                style: textTheme.displaySmall!
+                                                    .copyWith(
+                                                        color: Colors.red,
+                                                        fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        )
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            snapshot.data!.length > 4
+                                ? GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        viewall = true;
+                                      });
+                                    },
+                                    child: Text(
+                                      '+${totalgroups - 4}',
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                           ],
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error Loading Data'));
+                      } else {
+                        return DottedBorder(
+                          strokeWidth: 1,
+                          dashPattern: const [3, 3],
+                          borderType: BorderType.RRect,
+                          radius: const Radius.circular(15),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                          child: const SizedBox(
+                            width: 55,
+                            height: 55,
+                            child: Icon(FontAwesomeIcons.plus),
+                          ),
+                        );
+                      }
+                    } else {
+                      return Center(
+                        child: SpinKitDoubleBounce(
+                          color: purple,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              "Trip",
-                              overflow: TextOverflow.ellipsis,
-                              style: textTheme.displaySmall!.copyWith(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "Owe:\$100",
-                              style: textTheme.displaySmall!
-                                  .copyWith(color: Colors.red, fontSize: 10),
-                            ),
-                            Text(
-                              "Debt \$100",
-                              style: textTheme.displaySmall!
-                                  .copyWith(color: Colors.green, fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        totalgroups > 4
-            ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    viewall = true;
+                      );
+                    }
                   });
-                },
-                child: Text(
-                  '+${totalgroups - 4}',
-                  style: textTheme.titleMedium,
-                ),
-              )
-            : const SizedBox.shrink(),
-      ],
-    );
+            } else if (snapshot.hasError) {
+              return Center(child: Text("An error occured"));
+            } else {
+              return Container();
+            }
+          } else {
+            return Center(
+              child: SpinKitDoubleBounce(
+                color: purple,
+              ),
+            );
+          }
+        });
   }
 }

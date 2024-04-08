@@ -102,8 +102,8 @@ class _ScanState extends State<Scan> {
       radius: const Radius.circular(15),
       color: white,
       child: Container(
-        decoration: BoxDecoration(
-            color: green, borderRadius: BorderRadius.circular(15)),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
         child: selectedImage == null
             ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Row(
@@ -150,7 +150,10 @@ class _ScanState extends State<Scan> {
                   ],
                 ),
               ])
-            : Image.file(selectedImage!),
+            : Image.file(
+                selectedImage!,
+                fit: BoxFit.contain,
+              ),
       ),
     );
   }
@@ -230,56 +233,60 @@ class _ScanState extends State<Scan> {
     );
   }
 
-  Widget buildcontrolbuttons() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-              onPressed: () async {
-                await controller?.toggleFlash();
-                setState(() {});
-              },
-              icon: FutureBuilder(
-                future: controller?.getFlashStatus(),
-                builder: (context, snapshot) {
-                  if (snapshot.data != null) {
-                    return snapshot.data!
-                        ? Icon(
-                            Icons.flash_on_rounded,
-                            color: purple,
-                          )
-                        : const Icon(Icons.flash_off_rounded);
-                  } else {
-                    return Container();
-                  }
+  Widget buildcontrolbuttons() => scanRecipts
+      ? SizedBox.shrink()
+      : Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+                onPressed: () async {
+                  await controller?.toggleFlash();
+                  setState(() {});
                 },
-              )),
-          IconButton(
-              onPressed: () async {
-                await controller?.flipCamera();
-                setState(() {});
-              },
-              icon: FutureBuilder(
-                future: controller?.getCameraInfo(),
-                builder: (context, snapshot) {
-                  if (snapshot.data != null) {
-                    return const Icon(Icons.flip_camera_android);
-                  } else {
-                    return Container();
-                  }
+                icon: FutureBuilder(
+                  future: controller?.getFlashStatus(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data != null) {
+                      return snapshot.data!
+                          ? Icon(
+                              Icons.flash_on_rounded,
+                              color: purple,
+                            )
+                          : const Icon(Icons.flash_off_rounded);
+                    } else {
+                      return Container();
+                    }
+                  },
+                )),
+            IconButton(
+                onPressed: () async {
+                  await controller?.flipCamera();
+                  setState(() {});
                 },
-              )),
-        ],
-      );
+                icon: FutureBuilder(
+                  future: controller?.getCameraInfo(),
+                  builder: (context, snapshot) {
+                    if (snapshot.data != null) {
+                      return const Icon(Icons.flip_camera_android);
+                    } else {
+                      return Container();
+                    }
+                  },
+                )),
+          ],
+        );
   Widget buildResult() => Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
             color: Colors.white24, borderRadius: BorderRadius.circular(8)),
-        child: Text(
-          barcode != null ? "Result: ${barcode!.code}" : "Scan a code!",
-          maxLines: 2,
-        ),
+        child: scanRecipts
+            ? GestureDetector(onTap: () {}, child: Text('Next'))
+            : Text(
+                barcode != null ? "Result: ${barcode!.code}" : "Scan a code!",
+                maxLines: 2,
+              ),
       );
   Widget buildQrView(BuildContext context) => QRView(
         key: qrKey,

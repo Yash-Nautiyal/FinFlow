@@ -100,3 +100,35 @@ class UserModal3 {
     );
   }
 }
+
+class UserModal4 {
+  final String? id;
+  final Map to;
+  final Map from;
+  final String amount;
+
+  const UserModal4({
+    this.id,
+    required this.to,
+    required this.from,
+    required this.amount,
+  });
+
+  toJson() {
+    return {
+      "To": to,
+      "From": from,
+      "Amount": amount,
+    };
+  }
+
+  factory UserModal4.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    return UserModal4(
+      to: data["To"],
+      from: data["From"],
+      amount: data["Amount"],
+    );
+  }
+}

@@ -17,4 +17,8 @@ class AddController extends GetxController {
   Future<void> addUser(UserModal2 user2, String useruid) async {
     await userRepo.adduser(user2, useruid);
   }
+
+  Future<void> addtransaction(UserModal4 user) async {
+    await userRepo.maketransaction(user);
+  }
 }

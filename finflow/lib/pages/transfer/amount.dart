@@ -1,6 +1,10 @@
 import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/utils/firebase/controllers/Add_controller.dart';
+import 'package:finflow/utils/firebase/model/user_model.dart';
+import 'package:finflow/utils/firebase/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class Amount extends StatefulWidget {
   final String name;
@@ -14,8 +18,9 @@ class Amount extends StatefulWidget {
 class _AmountState extends State<Amount> {
   @override
   Widget build(BuildContext context) {
+    final add = Get.put(AddController());
+    String amount = "";
     TextTheme textTheme = Theme.of(context).textTheme;
-    double screenheights = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -68,6 +73,9 @@ class _AmountState extends State<Amount> {
               const SizedBox(height: 30),
               TextField(
                 keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  amount = value;
+                },
                 onSubmitted: (value) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
@@ -89,22 +97,32 @@ class _AmountState extends State<Amount> {
               ),
               const Spacer(),
               SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: purple,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {},
-                    child: Text(
-                      "Pay",
-                      style: textTheme.displayMedium!.copyWith(
-                          color: black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ))
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: purple,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () async {
+                    final name = await retrieveData('Name');
+                    final phno = await retrieveData('Phone');
+                    final user = UserModal4(
+                        to: {widget.name: widget.phone},
+                        from: {name: phno},
+                        amount: amount);
+                    add.addtransaction(user);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Pay",
+                    style: textTheme.displayMedium!.copyWith(
+                        color: black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              )
             ],
           ),
         ),

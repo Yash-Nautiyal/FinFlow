@@ -12,7 +12,19 @@ class FetchController extends GetxController {
     return await _user.allcards(uid);
   }
 
+  Future<UserModal2> getUserDetails(String uid) async {
+    return await _user.getUserdetails(uid);
+  }
+
   Future<List<UserModal2>> getallusers() async {
     return await _user.getallusers();
+  }
+
+  Future<List<UserModal3>> getallgroups(String uid) async {
+    return await _user.getallgroups(uid);
+  }
+
+  Future<List<UserModal4>> getalltransactions(String uid) async {
+    return await _user.getalltransactions(uid);
   }
 }

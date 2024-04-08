@@ -27,8 +27,6 @@ class _LoginPageState extends State<LoginPage> {
     TextTheme textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Scaffold(
-//Heading-----------------------------------------------------------------------
-
         resizeToAvoidBottomInset: false,
         body: SizedBox(
           width: screenWidth,
@@ -51,9 +49,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-
-                  //Input Email-------------------------------------------------------------------
-
                   Column(
                     children: [
                       Text('Sign Up',
@@ -160,7 +155,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-
                   SizedBox(
                     height: screenHeight * .06,
                   ),

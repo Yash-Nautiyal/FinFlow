@@ -12,6 +12,11 @@ class UserRepository extends GetxController {
     await _db.collection('Users').doc(userid).set(user.toJson());
   }
 
+  maketransaction(UserModal4 user) async {
+    final currentUserId = await retrieveData("UserID");
+    await _db.collection("${currentUserId}Transtactions").add(user.toJson());
+  }
+
   addgroup(UserModal3 user) async {
     final currentUserId = await retrieveData("UserID");
     await _db.collection("${currentUserId}Groups").add(user.toJson());
@@ -22,7 +27,7 @@ class UserRepository extends GetxController {
     await _db.collection("${currentUserId}Cards").add(user.toJson());
   }
 
-  Future<UserModal> getUserDetails(String cardnumber) async {
+  Future<UserModal> getUserCardDetails(String cardnumber) async {
     final currentUserId = await retrieveData("UserId");
 
     final snapshot = await _db
@@ -44,6 +49,31 @@ class UserRepository extends GetxController {
     final snapshot = await _db.collection("Users").get();
     final userdata =
         snapshot.docs.map((e) => UserModal2.fromSnapshot(e)).toList();
+    return userdata;
+  }
+
+  Future<List<UserModal3>> getallgroups(String useruid) async {
+    final snapshot = await _db.collection(useruid).get();
+    final userdata =
+        snapshot.docs.map((e) => UserModal3.fromSnapshot(e)).toList();
+    return userdata;
+  }
+
+  Future<UserModal2> getUserdetails(String uid) async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+
+    if (snapshot.exists) {
+      return UserModal2.fromSnapshot(snapshot);
+    } else {
+      throw Exception('User with UID $uid not found');
+    }
+  }
+
+  Future<List<UserModal4>> getalltransactions(String useruid) async {
+    final snapshot = await _db.collection(useruid).get();
+    final userdata =
+        snapshot.docs.map((e) => UserModal4.fromSnapshot(e)).toList();
     return userdata;
   }
 }
