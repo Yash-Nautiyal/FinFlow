@@ -1,6 +1,4 @@
 import 'package:finflow/pages/home/creditcard/swiper.dart';
-import 'package:finflow/pages/login/login.dart';
-import 'package:finflow/pages/login/verify.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/pages/home/creditcard/credit_card.dart';
 import 'package:finflow/pages/home/splitgroup/CreateGroup.dart';
@@ -13,7 +11,6 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_initicon/flutter_initicon.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
@@ -102,10 +99,22 @@ class HomeState extends State<Home> {
                               style: textTheme.displayMedium!
                                   .copyWith(fontSize: 15),
                             ),
-                            Text(
-                              'Johnny Jibs',
-                              style: textTheme.displayMedium!.copyWith(
-                                  fontSize: 25, fontWeight: FontWeight.w600),
+                            FutureBuilder<Text>(
+                              future: nameText(textTheme),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<Text?> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                      child: Text('Error: ${snapshot.error}'));
+                                } else {
+                                  return snapshot.data ??
+                                      Center(child: Text('No data'));
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -193,6 +202,15 @@ class HomeState extends State<Home> {
     final name = await retrieveData("Name");
     return Center(
       child: Initicon(text: name.toString()),
+    );
+  }
+
+  Future<Text> nameText(TextTheme textTheme) async {
+    final name = await retrieveData("Name");
+    return Text(
+      name.toString(),
+      style: textTheme.displayMedium!
+          .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
     );
   }
 
