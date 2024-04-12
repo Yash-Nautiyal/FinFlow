@@ -27,17 +27,6 @@ class UserRepository extends GetxController {
     await _db.collection("${currentUserId}Cards").add(user.toJson());
   }
 
-  Future<UserModal> getUserCardDetails(String cardnumber) async {
-    final currentUserId = await retrieveData("UserId");
-
-    final snapshot = await _db
-        .collection("${currentUserId}Cards")
-        .where("CardNumber", isEqualTo: cardnumber)
-        .get();
-    final userdata = snapshot.docs.map((e) => UserModal.fromSnapshot(e)).single;
-    return userdata;
-  }
-
   Future<List<UserModal>> allcards(String useruid) async {
     final snapshot = await _db.collection(useruid).get();
     final userdata =
@@ -75,5 +64,21 @@ class UserRepository extends GetxController {
     final userdata =
         snapshot.docs.map((e) => UserModal4.fromSnapshot(e)).toList();
     return userdata;
+  }
+
+  Future<UserModal3> getGroupDetails(String documentName) async {
+    final currentUserId = await retrieveData("UserID");
+
+    final snapshot = await _db
+        .collection("${currentUserId}Groups")
+        .doc(documentName) // Use doc() with the provided document name
+        .get();
+
+    if (snapshot.exists) {
+      final userdata = UserModal3.fromSnapshot(snapshot);
+      return userdata;
+    } else {
+      throw Exception("Document not found");
+    }
   }
 }

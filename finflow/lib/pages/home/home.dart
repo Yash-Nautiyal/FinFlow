@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:finflow/pages/home/creditcard/swiper.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/pages/home/creditcard/credit_card.dart';
@@ -201,7 +203,9 @@ class HomeState extends State<Home> {
   Future<Center> username() async {
     final name = await retrieveData("Name");
     return Center(
-      child: Initicon(text: name.toString()),
+      child: Initicon(
+          text: name.toString(),
+          backgroundColor: niceColors[Random().nextInt(19)]),
     );
   }
 
@@ -566,6 +570,8 @@ class HomeState extends State<Home> {
                                 children: List.generate(
                                   snapshot.data!.length,
                                   (index) {
+                                    print(snapshot.data![index].id);
+
                                     final containerSize = screenwidth / 7.7;
                                     return Row(
                                       children: [
@@ -575,6 +581,8 @@ class HomeState extends State<Home> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) => Group(
+                                                          docname: snapshot
+                                                              .data![index].id!,
                                                           title: snapshot
                                                               .data![index]
                                                               .grpname,
@@ -669,18 +677,30 @@ class HomeState extends State<Home> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error Loading Data'));
                       } else {
-                        return DottedBorder(
-                          strokeWidth: 1,
-                          dashPattern: const [3, 3],
-                          borderType: BorderType.RRect,
-                          radius: const Radius.circular(15),
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                          child: const SizedBox(
-                            width: 55,
-                            height: 55,
-                            child: Icon(FontAwesomeIcons.plus),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                ModalBottomSheetRoute(
+                                    builder: (context) => const CreateGroup(),
+                                    enableDrag: true,
+                                    showDragHandle: true,
+                                    isScrollControlled: true));
+                          },
+                          child: DottedBorder(
+                            strokeWidth: 1,
+                            dashPattern: const [3, 3],
+                            borderType: BorderType.RRect,
+                            radius: const Radius.circular(15),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            child: const SizedBox(
+                              width: 55,
+                              height: 55,
+                              child: Icon(FontAwesomeIcons.plus),
+                            ),
                           ),
                         );
                       }

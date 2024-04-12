@@ -94,6 +94,7 @@ class UserModal3 {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return UserModal3(
+      id: document.id,
       grpname: data["GroupName"],
       moto: data["Moto"],
       member: data["Memebers"],
