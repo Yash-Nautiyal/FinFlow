@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
-import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/services/ocr_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +9,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Scan extends StatefulWidget {
-  const Scan({super.key});
+  const Scan({Key? key}) : super(key: key);
 
   @override
   State<Scan> createState() => _ScanState();
@@ -19,6 +19,8 @@ class _ScanState extends State<Scan> {
   final qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? barcode;
   QRViewController? controller;
+  File? selectedImage;
+
   @override
   void dispose() {
     controller?.dispose();
@@ -46,8 +48,8 @@ class _ScanState extends State<Scan> {
   }
 
   bool scanQr = true;
-  bool scanRecipts = false;
-  File? selectedImage;
+  bool scanReceipts = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -63,58 +65,65 @@ class _ScanState extends State<Scan> {
                     bottom: 120,
                     left: 20,
                     right: 20,
-                    child: scanRecipt(textTheme)),
+                    child: scanReceipt(textTheme),
+                  ),
             Positioned(
-                top: 10,
-                left: 0,
-                child: IconButton(
-                  icon: Icon(FontAwesomeIcons.arrowLeft),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )),
+              top: 10,
+              left: 0,
+              child: IconButton(
+                icon: Icon(FontAwesomeIcons.arrowLeft),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
             Positioned(
-                bottom: 20,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          _launchURL(barcode!.code);
-                        },
-                        child: buildResult()),
-                    const SizedBox(
-                      height: 9,
-                    ),
-                    switchoptions(context, textTheme)
-                  ],
-                )),
-            Positioned(top: 10, child: buildcontrolbuttons()),
+              bottom: 20,
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: buildResult(),
+                  ),
+                  const SizedBox(
+                    height: 9,
+                  ),
+                  switchOptions(context, textTheme)
+                ],
+              ),
+            ),
+            Positioned(
+              top: 10,
+              child: buildControlButtons(),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget scanRecipt(TextTheme textTheme) {
+  Widget scanReceipt(TextTheme textTheme) {
     return DottedBorder(
       dashPattern: const [5, 5],
       borderType: BorderType.RRect,
       radius: const Radius.circular(15),
-      color: white,
+      color: Colors.white,
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
         child: selectedImage == null
-            ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
                         style: ButtonStyle(
-                          iconColor: MaterialStatePropertyAll(purple),
+                          iconColor: MaterialStateProperty.all(Colors.purple),
                         ),
                         onPressed: () {
-                          _pickimagefromgallery();
+                          _pickImageFromGallery();
                         },
                         child: Row(
                           children: [
@@ -125,31 +134,33 @@ class _ScanState extends State<Scan> {
                             ),
                             const Icon(FontAwesomeIcons.folder)
                           ],
-                        )),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        iconColor: MaterialStatePropertyAll(purple),
+                        ),
                       ),
-                      onPressed: () {
-                        _pickimagefromcamera();
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            'Camera',
-                            style:
-                                textTheme.displaySmall!.copyWith(fontSize: 20),
-                          ),
-                          const Icon(FontAwesomeIcons.camera)
-                        ],
+                      const SizedBox(
+                        width: 10,
                       ),
-                    )
-                  ],
-                ),
-              ])
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          iconColor: MaterialStateProperty.all(Colors.purple),
+                        ),
+                        onPressed: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              'Camera',
+                              style: textTheme.displaySmall!
+                                  .copyWith(fontSize: 20),
+                            ),
+                            const Icon(FontAwesomeIcons.camera)
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              )
             : Image.file(
                 selectedImage!,
                 fit: BoxFit.contain,
@@ -158,7 +169,7 @@ class _ScanState extends State<Scan> {
     );
   }
 
-  Future _pickimagefromgallery() async {
+  Future _pickImageFromGallery() async {
     final returnedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
@@ -166,15 +177,26 @@ class _ScanState extends State<Scan> {
     });
   }
 
-  Future _pickimagefromcamera() async {
-    final returnedImage =
+  Future _pickImageFromCamera() async {
+    final pickedImage =
         await ImagePicker().pickImage(source: ImageSource.camera);
-    setState(() {
-      selectedImage = File(returnedImage!.path);
-    });
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = File(pickedImage.path);
+      });
+      // Call OCRService to perform OCR on the selected image
+      /* final ocrData = await OCRService.performOCR(selectedImage!);
+      if (ocrData != null) {
+        // Handle OCR response here
+        print('OCR Data: $ocrData');
+      } else {
+        // Handle case when OCR service returns null (error occurred)
+        print('OCR Service returned null');
+      } */
+    }
   }
 
-  SizedBox switchoptions(BuildContext context, TextTheme textTheme) {
+  SizedBox switchOptions(BuildContext context, TextTheme textTheme) {
     return SizedBox(
       width: MediaQuery.of(context).size.width / 1.5,
       height: 40,
@@ -186,7 +208,7 @@ class _ScanState extends State<Scan> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    scanRecipts = false;
+                    scanReceipts = false;
                     scanQr = true;
                   });
                 },
@@ -194,7 +216,7 @@ class _ScanState extends State<Scan> {
                   child: Text(
                     'Scan QR',
                     style: textTheme.displayMedium!.copyWith(
-                        color: scanQr ? purple : null,
+                        color: scanQr ? Colors.purple : null,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
                   ),
@@ -204,7 +226,7 @@ class _ScanState extends State<Scan> {
           ),
           Container(
             width: 2,
-            color: white.withOpacity(.5),
+            color: Colors.white.withOpacity(.5),
           ),
           Expanded(
             child: Align(
@@ -212,15 +234,15 @@ class _ScanState extends State<Scan> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    scanRecipts = true;
+                    scanReceipts = true;
                     scanQr = false;
                   });
                 },
                 child: SizedBox(
                   child: Text(
-                    'Scan Recipts',
+                    'Scan Receipts',
                     style: textTheme.displayMedium!.copyWith(
-                        color: scanRecipts ? purple : null,
+                        color: scanReceipts ? Colors.purple : null,
                         fontSize: 17,
                         fontWeight: FontWeight.w600),
                   ),
@@ -233,7 +255,7 @@ class _ScanState extends State<Scan> {
     );
   }
 
-  Widget buildcontrolbuttons() => scanRecipts
+  Widget buildControlButtons() => scanReceipts
       ? SizedBox.shrink()
       : Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -250,10 +272,7 @@ class _ScanState extends State<Scan> {
                   builder: (context, snapshot) {
                     if (snapshot.data != null) {
                       return snapshot.data!
-                          ? Icon(
-                              Icons.flash_on_rounded,
-                              color: purple,
-                            )
+                          ? Icon(Icons.flash_on_rounded, color: Colors.purple)
                           : const Icon(Icons.flash_off_rounded);
                     } else {
                       return Container();
@@ -261,43 +280,70 @@ class _ScanState extends State<Scan> {
                   },
                 )),
             IconButton(
-                onPressed: () async {
-                  await controller?.flipCamera();
-                  setState(() {});
+              onPressed: () async {
+                await controller?.flipCamera();
+                setState(() {});
+              },
+              icon: FutureBuilder(
+                future: controller?.getCameraInfo(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return const Icon(Icons.flip_camera_android);
+                  } else {
+                    return Container();
+                  }
                 },
-                icon: FutureBuilder(
-                  future: controller?.getCameraInfo(),
-                  builder: (context, snapshot) {
-                    if (snapshot.data != null) {
-                      return const Icon(Icons.flip_camera_android);
-                    } else {
-                      return Container();
-                    }
-                  },
-                )),
+              ),
+            ),
           ],
         );
+
   Widget buildResult() => Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
             color: Colors.white24, borderRadius: BorderRadius.circular(8)),
-        child: scanRecipts
-            ? GestureDetector(onTap: () {}, child: Text('Next'))
+        child: scanReceipts
+            ? TextButton(
+                onPressed: () async {
+                  if (selectedImage != null) {
+                    await processReceipt(selectedImage as File);
+                    /* final ocrData = await OCRService.performOCR(
+                        selectedImage!.path as File);
+                    if (ocrData != null) {
+                      print(ocrData);
+                      // Handle OCR data, e.g., navigate to the next screen with OCR data
+                      // Navigator.push(
+                      //context,
+                      ///MaterialPageRoute(builder: (context) => NextScreen(ocrData: ocrData)),
+                      //);
+                    } else {
+                      // Handle case when OCR service returns null (error occurred)
+                      print('OCR Service returned null');
+                    } */
+                  } else {
+                    // Handle case when no image is selected
+                    print('No image selected');
+                  }
+                },
+                child: Text('Next'),
+              )
             : Text(
                 barcode != null ? "Result: ${barcode!.code}" : "Scan a code!",
                 maxLines: 2,
               ),
       );
+
   Widget buildQrView(BuildContext context) => QRView(
         key: qrKey,
         onQRViewCreated: onQRViewCreated,
         overlay: QrScannerOverlayShape(
-            borderColor: purple,
+            borderColor: Colors.purple,
             borderWidth: 10,
             borderLength: 20,
             borderRadius: 10,
             cutOutSize: MediaQuery.of(context).size.width * .8),
       );
+
   void onQRViewCreated(QRViewController controller) async {
     setState(() {
       this.controller = controller;

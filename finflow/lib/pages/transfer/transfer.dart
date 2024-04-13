@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:finflow/pages/transfer/amount.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/utils/firebase/controllers/fetch_controller.dart';
@@ -138,24 +140,11 @@ class _TransferState extends State<Transfer> {
                                 children: [
                                   Row(
                                     children: [
-                                      FutureBuilder<Center>(
-                                        future: username(),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<Center?> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          } else if (snapshot.hasError) {
-                                            return Center(
-                                                child: Text(
-                                                    'Error: ${snapshot.error}'));
-                                          } else {
-                                            return snapshot.data ??
-                                                Center(child: Text('No data'));
-                                          }
-                                        },
+                                      Initicon(
+                                        text:
+                                            "${snapshot.data![index].firstname} ${snapshot.data![index].lastname}",
+                                        backgroundColor:
+                                            niceColors[Random().nextInt(19)],
                                       ),
                                       const SizedBox(width: 10),
                                       Column(
@@ -208,13 +197,6 @@ class _TransferState extends State<Transfer> {
           ],
         ),
       )),
-    );
-  }
-
-  Future<Center> username() async {
-    final name = await retrieveData("Name");
-    return Center(
-      child: Initicon(text: name.toString()),
     );
   }
 }

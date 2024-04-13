@@ -1,12 +1,24 @@
+import 'dart:math';
+
+import 'package:finflow/pages/home/splitgroup/chips.dart';
 import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/utils/firebase/controllers/fetch_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class Group extends StatefulWidget {
   final String title;
   final String bgimage;
-  const Group({super.key, required this.title, required this.bgimage});
+  final String docname;
+  const Group(
+      {super.key,
+      required this.title,
+      required this.bgimage,
+      required this.docname});
 
   @override
   State<Group> createState() => _GroupState();
@@ -17,11 +29,19 @@ class _GroupState extends State<Group> {
   String kPickedName = '';
   Map<String, String> members = {};
   PhoneContact? _phoneContact;
+  late List<String> selectedFilter;
+  @override
+  void initState() {
+    super.initState();
+    selectedFilter = [];
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    final fetch = Get.put(FetchController());
     return Scaffold(
       body: SizedBox(
         width: screenWidth,
@@ -35,14 +55,15 @@ class _GroupState extends State<Group> {
             Positioned(
               top: 0,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 width: screenWidth,
                 height: screenHeight * .25,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(widget.bgimage),
-                    fit: BoxFit.cover,
-                  ),
+                      image: AssetImage(widget.bgimage),
+                      fit: BoxFit.cover,
+                      opacity: .6),
                 ),
                 child: Align(
                     alignment: Alignment.topCenter,
@@ -86,7 +107,9 @@ class _GroupState extends State<Group> {
                             height: 70,
                             decoration: BoxDecoration(
                                 border: Border.all(color: black, width: 2.7),
-                                color: purple,
+                                image: DecorationImage(
+                                    image: AssetImage(widget.bgimage),
+                                    fit: BoxFit.cover),
                                 borderRadius: BorderRadius.circular(8)),
                           ),
                           const SizedBox(
@@ -178,7 +201,16 @@ class _GroupState extends State<Group> {
                     Expanded(
                       child: SizedBox(
                         child: Column(
-                          children: [],
+                          children: [
+                            ListOfChips(
+                              onFiltersChanged: (p0) {
+                                selectedFilter = p0;
+                              },
+                            ),
+                            Divider(
+                              color: grey,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -186,6 +218,73 @@ class _GroupState extends State<Group> {
                 ),
               ),
             ),
+            Positioned(
+                top: screenHeight * .35 - 65,
+                bottom: screenHeight * .56,
+                left: screenWidth * .65,
+                right: 0,
+                child: SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Members:',
+                        style: textTheme.displayMedium!.copyWith(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 7,
+                      ),
+                      Expanded(
+                        child: FutureBuilder(
+                          future: fetch.getGroupdetail(widget.docname),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (snapshot.hasData) {
+                                final memberMap = snapshot.data!.member
+                                    as Map<String, dynamic>;
+                                final memberList = memberMap.keys.toList();
+                                return ListView.builder(
+                                  itemCount: memberList.length,
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 4,
+                                          backgroundColor:
+                                              niceColors[Random().nextInt(19)],
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          memberList[index],
+                                          style: textTheme.displaySmall!
+                                              .copyWith(fontSize: 16),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text("${snapshot.error}"),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            } else {
+                              return SpinKitDoubleBounce(
+                                color: purple,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ))
           ],
         ),
       ),

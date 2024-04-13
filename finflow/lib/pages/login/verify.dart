@@ -129,7 +129,7 @@ class _MyVerifyState extends State<MyVerify> {
                         final String userid = userCredential.user!.uid;
                         MyVerify.userUid = userid;
                         saveData('UserID', userid);
-                        saveData('Name', "${LoginPage.fn}  ${LoginPage.ln}");
+                        saveData('Name', "${LoginPage.fn} ${LoginPage.ln}");
                         saveData('Email', LoginPage.email);
                         saveData('Phone', MyPhone.phno);
                         final user = UserModal2(
