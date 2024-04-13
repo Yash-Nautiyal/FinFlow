@@ -306,7 +306,7 @@ class _ScanState extends State<Scan> {
             ? TextButton(
                 onPressed: () async {
                   if (selectedImage != null) {
-                    await processReceipt(selectedImage as File);
+                    await OCRService.processReceipt(selectedImage as File);
                     /* final ocrData = await OCRService.performOCR(
                         selectedImage!.path as File);
                     if (ocrData != null) {
