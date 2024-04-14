@@ -78,7 +78,7 @@ class OCRService {
 
   Future<void> sendDataToPythonAPI(Map<String, dynamic> data) async {
     final url = Uri.parse(
-        'http://your_python_api_endpoint'); // Replace with your API URL
+        ''); // Replace with your API URL
 
     final response = await http.post(
       url,
