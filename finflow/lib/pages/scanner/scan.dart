@@ -306,7 +306,13 @@ class _ScanState extends State<Scan> {
             ? TextButton(
                 onPressed: () async {
                   if (selectedImage != null) {
-                    await OCRService.processReceipt(selectedImage as File);
+                    
+                    final combinedData =
+                        await OCRService.processReceipt(selectedImage as File);
+                    if (combinedData != null) {
+                      await OCRService.sendDataToPythonAPI(combinedData);
+                    }
+
                     /* final ocrData = await OCRService.performOCR(
                         selectedImage!.path as File);
                     if (ocrData != null) {
