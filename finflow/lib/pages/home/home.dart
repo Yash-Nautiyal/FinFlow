@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:finflow/pages/home/creditcard/swiper.dart';
+import 'package:finflow/pages/home/widgets/name_image.dart';
+import 'package:finflow/screens.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/pages/home/creditcard/credit_card.dart';
 import 'package:finflow/pages/home/splitgroup/CreateGroup.dart';
@@ -74,22 +76,7 @@ class HomeState extends State<Home> {
                         .copyWith(top: 15),
                     child: Row(
                       children: [
-                        FutureBuilder<Center>(
-                          future: username(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<Center?> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Center(
-                                  child: Text('Error: ${snapshot.error}'));
-                            } else {
-                              return snapshot.data ??
-                                  Center(child: Text('No data'));
-                            }
-                          },
-                        ),
+                        nameimage(45),
                         const SizedBox(
                           width: 9,
                         ),
@@ -101,23 +88,11 @@ class HomeState extends State<Home> {
                               style: textTheme.displayMedium!
                                   .copyWith(fontSize: 15),
                             ),
-                            FutureBuilder<Text>(
-                              future: nameText(textTheme),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Text?> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                      child: Text('Error: ${snapshot.error}'));
-                                } else {
-                                  return snapshot.data ??
-                                      Center(child: Text('No data'));
-                                }
-                              },
-                            ),
+                            Text(
+                              Screens.Name,
+                              style: textTheme.displayMedium!
+                                  .copyWith(fontSize: 20),
+                            )
                           ],
                         ),
                       ],
@@ -200,7 +175,7 @@ class HomeState extends State<Home> {
     );
   }
 
-  Future<Center> username() async {
+  /*  Future<Center> username() async {
     final name = await retrieveData("Name");
     return Center(
       child: Initicon(
@@ -216,7 +191,7 @@ class HomeState extends State<Home> {
       style: textTheme.displayMedium!
           .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
     );
-  }
+  } */
 
   SizedBox creditCardSwiper(double screenwidth, double screenheight,
       TextTheme textTheme, FetchController fetch) {

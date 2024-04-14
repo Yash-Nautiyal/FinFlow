@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:finflow/pages/home/widgets/name_Image.dart';
+import 'package:finflow/screens.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,16 +15,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  late String firstname;
-  late String lastname;
   late String email;
   late String avatar;
   late File? selectedimage;
   @override
   void initState() {
     super.initState();
-    firstname = "Johnny";
-    lastname = "Jibs";
+
     email = widget.email;
     avatar = "images/profile.jpg";
     selectedimage = null;
@@ -30,6 +29,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     TextTheme textStyle = Theme.of(context).textTheme;
@@ -86,7 +86,7 @@ class _ProfileState extends State<Profile> {
                   ], color: black, borderRadius: BorderRadius.circular(20)),
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 10.0, right: 10, top: 115, bottom: 10),
+                        left: 10.0, right: 10, top: 100, bottom: 10),
                     child: Column(children: [
                       //MYProfile--------------------------------------------------------------------
 
@@ -107,7 +107,7 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     Icon(
                                       FontAwesomeIcons.key,
-                                      color: grey,
+                                      color: white,
                                     ),
                                     const SizedBox(
                                       width: 6,
@@ -121,7 +121,7 @@ class _ProfileState extends State<Profile> {
                                     const Spacer(),
                                     Icon(
                                       FontAwesomeIcons.arrowRight,
-                                      color: grey,
+                                      color: white,
                                     )
                                   ],
                                 ),
@@ -147,7 +147,7 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     Icon(
                                       FontAwesomeIcons.key,
-                                      color: grey,
+                                      color: white,
                                     ),
                                     const SizedBox(
                                       width: 6,
@@ -161,7 +161,7 @@ class _ProfileState extends State<Profile> {
                                     const Spacer(),
                                     Icon(
                                       FontAwesomeIcons.arrowRight,
-                                      color: grey,
+                                      color: white,
                                     )
                                   ],
                                 ),
@@ -187,7 +187,7 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   Icon(
                                     Icons.language_rounded,
-                                    color: grey,
+                                    color: white,
                                   ),
                                   const SizedBox(
                                     width: 6,
@@ -199,13 +199,6 @@ class _ProfileState extends State<Profile> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const Spacer(),
-                                  SizedBox(
-                                    width: 140,
-                                    /* child: LanguagePickerDropdown(
-                                      initialValue: Languages.bihariLanguages,
-                                      onValuePicked: (Language language) {},
-                                    ), */
-                                  )
                                 ],
                               ),
                             ),
@@ -262,7 +255,7 @@ class _ProfileState extends State<Profile> {
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text(
+                                                    child: const Text(
                                                       'Cancel',
                                                       style: TextStyle(
                                                           fontFamily:
@@ -312,7 +305,7 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     Icon(
                                       FontAwesomeIcons.rightFromBracket,
-                                      color: grey,
+                                      color: white,
                                     ),
                                     const SizedBox(
                                       width: 6,
@@ -324,7 +317,7 @@ class _ProfileState extends State<Profile> {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     const Spacer(),
-                                    Icon(
+                                    const Icon(
                                       FontAwesomeIcons.arrowRight,
 /*                                       color: lightgrey,
  */
@@ -349,38 +342,21 @@ class _ProfileState extends State<Profile> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 60,
-                        backgroundColor: black,
-                        child: const CircleAvatar(
-                          radius: 58,
-                          /* backgroundImage: selectedimage == null
-                              ? AssetImage(avatar)
-                              : FileImage(selectedimage!)
-                                  as ImageProvider<Object>, */
-                          child: Icon(
-                            FontAwesomeIcons.user,
-                            size: 50,
-                          ),
-                        ),
-                      ),
+                          radius: 40,
+                          backgroundColor: black,
+                          child: nameimage(70)),
                       SizedBox(
                         height: 70,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '$firstname $lastname',
-                              style: TextStyle(
-                                color: purple,
-                                fontFamily: 'Cero Pro',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17,
-                              ),
-                            ),
+                            Text(Screens.Name,
+                                style: textTheme.displayMedium!.copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
                             Text(
                               email,
                               style: TextStyle(
-                                color: grey,
+                                color: white,
                                 fontFamily: 'Cero Pro',
                               ),
                             ),

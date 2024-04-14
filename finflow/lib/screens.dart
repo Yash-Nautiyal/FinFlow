@@ -1,16 +1,18 @@
 import 'package:finflow/pages/chat/chat.dart';
 import 'package:finflow/pages/home/home.dart';
+import 'package:finflow/pages/home/widgets/name_image.dart';
 import 'package:finflow/pages/profile/profile.dart';
 import 'package:finflow/pages/scanner/scan.dart';
 import 'package:finflow/pages/stats/stats_screen.dart';
 import 'package:finflow/pages/transfer/transfer.dart';
+import 'package:finflow/utils/firebase/shared_preference.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 
 class Screens extends StatefulWidget {
   const Screens({super.key});
-
+  static String Name = "";
   @override
   State<Screens> createState() => _ScreensState();
 }
@@ -24,6 +26,7 @@ class _ScreensState extends State<Screens> {
   void initState() {
     super.initState();
     pageController = PageController();
+    fetchDetails();
   }
 
   @override
@@ -41,6 +44,11 @@ class _ScreensState extends State<Screens> {
         curve: Curves.easeInOut,
       );
     });
+  }
+
+  void fetchDetails() async {
+    final name = await retrieveData("Name");
+    Screens.Name = name.toString();
   }
 
   @override
@@ -182,7 +190,9 @@ class _ScreensState extends State<Screens> {
                             style: const ButtonStyle(
                                 side: MaterialStatePropertyAll(
                                     BorderSide(style: BorderStyle.none))),
-                            onPressed: () {},
+                            onPressed: () {
+                              _onBottomNavBarTapped(3);
+                            },
                             icon: const Icon(
                               Boxicons.bx_user,
                               size: 27,
