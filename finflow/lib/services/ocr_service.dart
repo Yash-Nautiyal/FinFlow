@@ -61,7 +61,7 @@ class OCRService {
             'Payment_Method': ocrData['receipts'][0]['payment_method'],
             'Date': ocrData['receipts'][0]['date'],
             'Time': ocrData['receipts'][0]['time'],
-            'Items': items,
+            //'Items': items,
             // Add more fields as needed
           },
         };
@@ -77,7 +77,7 @@ class OCRService {
 
   Future<void> sendDataToPythonAPI(Map<String, dynamic> data) async {
     final url = Uri.parse(
-        'http://your_python_api_endpoint'); // Replace with your API URL
+        ''); // Replace with your API URL
 
     final response = await http.post(
       url,
