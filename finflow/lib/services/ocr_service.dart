@@ -62,7 +62,7 @@ class OCRService {
             'Payment_Method': ocrData['receipts'][0]['payment_method'],
             'Date': ocrData['receipts'][0]['date'],
             'Time': ocrData['receipts'][0]['time'],
-            'Items': items,
+            //'Items': items,
             // Add more fields as needed
           },
         };
