@@ -106,6 +106,7 @@ class BarChartSample2State extends State<BarChartSample2> {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return AspectRatio(
       aspectRatio: 1,
       child: Padding(
@@ -114,22 +115,34 @@ class BarChartSample2State extends State<BarChartSample2> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                makeTransactionsIcon(),
-                const SizedBox(
-                  width: 38,
-                ),
-                const Text(
-                  'Transactions',
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+                CircleAvatar(
+                  radius: 6,
+                  backgroundColor: widget.leftBarColor,
                 ),
                 const SizedBox(
-                  width: 4,
+                  width: 6,
                 ),
-                const Text(
-                  'state',
-                  style: TextStyle(color: Color(0xff77839a), fontSize: 16),
+                Text(
+                  'Actual',
+                  style: textTheme.displayMedium!
+                      .copyWith(fontSize: 15, color: Colors.white),
+                ),
+                const SizedBox(
+                  width: 40,
+                ),
+                CircleAvatar(
+                  radius: 6,
+                  backgroundColor: widget.rightBarColor,
+                ),
+                const SizedBox(
+                  width: 6,
+                ),
+                Text(
+                  'Expected',
+                  style: textTheme.displayMedium!
+                      .copyWith(fontSize: 15, color: Colors.white),
                 ),
               ],
             ),
@@ -238,11 +251,11 @@ class BarChartSample2State extends State<BarChartSample2> {
     );
     String text;
     if (value == 0) {
-      text = '1K';
+      text = '100';
     } else if (value == 10) {
-      text = '5K';
+      text = '500';
     } else if (value == 19) {
-      text = '10K';
+      text = '1K';
     } else {
       return Container();
     }

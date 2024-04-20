@@ -186,20 +186,11 @@ class BarChartSample6 extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Activity',
-            style: TextStyle(
-              color: AppColors.contentColorBlue,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
           LegendsListWidget(
             legends: [
-              Legend('Pilates', pilateColor),
-              Legend('Quick workouts', quickWorkoutColor),
-              Legend('Cycling', cyclingColor),
+              Legend('Shopping', pilateColor),
+              Legend('Food', quickWorkoutColor),
+              Legend('Bills', cyclingColor),
             ],
           ),
           const SizedBox(height: 14),

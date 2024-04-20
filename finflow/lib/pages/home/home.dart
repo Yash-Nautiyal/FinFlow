@@ -61,6 +61,13 @@ class HomeState extends State<Home> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
+    Map<String, String> recent = {
+      'Kabir Yadav': '-\$100',
+      'Palash Dey': '+\$20',
+      'Shrey Goel': '+\$104',
+      'Kshitiz Saxena': '-\$150',
+      'Mohit Roy': '-\$300'
+    };
 
     return SafeArea(
       child: Scaffold(
@@ -166,32 +173,14 @@ class HomeState extends State<Home> {
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              sliver:
-                  recentTrasactionsGrid(screenwidth, screenheight, textTheme),
+              sliver: recentTrasactionsGrid(
+                  screenwidth, screenheight, textTheme, recent),
             ),
           ],
         ),
       ),
     );
   }
-
-  /*  Future<Center> username() async {
-    final name = await retrieveData("Name");
-    return Center(
-      child: Initicon(
-          text: name.toString(),
-          backgroundColor: niceColors[Random().nextInt(19)]),
-    );
-  }
-
-  Future<Text> nameText(TextTheme textTheme) async {
-    final name = await retrieveData("Name");
-    return Text(
-      name.toString(),
-      style: textTheme.displayMedium!
-          .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
-    );
-  } */
 
   SizedBox creditCardSwiper(double screenwidth, double screenheight,
       TextTheme textTheme, FetchController fetch) {
@@ -290,8 +279,8 @@ class HomeState extends State<Home> {
         ));
   }
 
-  AnimationLimiter recentTrasactionsGrid(
-      double screenwidth, double screenheight, TextTheme textTheme) {
+  AnimationLimiter recentTrasactionsGrid(double screenwidth,
+      double screenheight, TextTheme textTheme, Map<String, String> recent) {
     return AnimationLimiter(
       child: SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -314,45 +303,58 @@ class HomeState extends State<Home> {
                       top: 20,
                       left: 5,
                       right: 5,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5)
-                            .copyWith(top: 25),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color.fromARGB(255, 56, 56, 56),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Yash Nautiyal",
-                              textAlign: TextAlign.center,
-                              style: textTheme.displaySmall!.copyWith(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                      child: Material(
+                        elevation: 9,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5)
+                              .copyWith(top: 25, bottom: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: const Color.fromARGB(255, 56, 56, 56),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                recent.keys.elementAt(index).split(" ")[0],
+                                textAlign: TextAlign.center,
+                                style: textTheme.displaySmall!
+                                    .copyWith(fontSize: 17, color: white),
+                              ),
+                              const Spacer(),
+                              Text(
+                                recent.values.elementAt(index),
+                                textAlign: TextAlign.center,
+                                style: textTheme.displaySmall!.copyWith(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: recent.values
+                                            .elementAt(index)
+                                            .startsWith("-")
+                                        ? Colors.redAccent
+                                        : green),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     Positioned(
                       top: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colors[0],
-                        ),
-                      ),
+                      left: 27,
+                      right: 27,
+                      child: Initicon(
+                          size: 40,
+                          text: recent.keys.elementAt(index),
+                          backgroundColor: niceColors[
+                              Random().nextInt(niceColors.length - 1)]),
                     ),
                   ],
                 ),
               ),
             );
           },
-          childCount: 7,
+          childCount: recent.length,
         ),
       ),
     );

@@ -11,7 +11,7 @@ Future<Center> username(double Size) async {
     child: Initicon(
         text: name.toString(),
         size: Size,
-        backgroundColor: niceColors[Random().nextInt(19)]),
+        backgroundColor: niceColors[Random().nextInt(niceColors.length - 1)]),
   );
 }
 

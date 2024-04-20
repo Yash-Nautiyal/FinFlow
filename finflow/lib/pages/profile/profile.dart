@@ -106,7 +106,7 @@ class _ProfileState extends State<Profile> {
                                 child: Row(
                                   children: [
                                     Icon(
-                                      FontAwesomeIcons.key,
+                                      Icons.person,
                                       color: white,
                                     ),
                                     const SizedBox(
@@ -146,7 +146,7 @@ class _ProfileState extends State<Profile> {
                                 child: Row(
                                   children: [
                                     Icon(
-                                      FontAwesomeIcons.key,
+                                      Icons.history,
                                       color: white,
                                     ),
                                     const SizedBox(
@@ -227,24 +227,17 @@ class _ProfileState extends State<Profile> {
                                           Expanded(
                                             flex: 1,
                                             child: Text(
-                                              'Log out of NewsFeed? ',
-                                              style: TextStyle(
-                                                  color: purple,
-                                                  fontFamily: 'CEra Pro',
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                              'Log out of FinFlow? ',
+                                              style: textTheme.displayMedium!
+                                                  .copyWith(fontSize: 20),
                                             ),
                                           ),
                                           Expanded(
                                             flex: 2,
                                             child: Text(
-                                              'You can always log back in at any time. If you want to switch accounts you can do that by adding an existing account',
-                                              style: TextStyle(
-                                                  color: purple,
-                                                  fontFamily: 'CEra Pro',
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
+                                                'You can always log back in at any time. If you want to switch accounts you can do that by adding an existing account',
+                                                style: textTheme.displaySmall!
+                                                    .copyWith(fontSize: 13)),
                                           ),
                                           Expanded(
                                             flex: 1,
@@ -306,6 +299,7 @@ class _ProfileState extends State<Profile> {
                                     Icon(
                                       FontAwesomeIcons.rightFromBracket,
                                       color: white,
+                                      size: 20,
                                     ),
                                     const SizedBox(
                                       width: 6,
@@ -317,11 +311,11 @@ class _ProfileState extends State<Profile> {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     const Spacer(),
-                                    const Icon(
-                                      FontAwesomeIcons.arrowRight,
+                                    Icon(FontAwesomeIcons.arrowRight,
+                                        color: white
 /*                                       color: lightgrey,
  */
-                                    )
+                                        )
                                   ],
                                 ),
                               ),
@@ -348,18 +342,14 @@ class _ProfileState extends State<Profile> {
                       SizedBox(
                         height: 70,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(Screens.Name,
                                 style: textTheme.displayMedium!.copyWith(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
-                            Text(
-                              email,
-                              style: TextStyle(
-                                color: white,
-                                fontFamily: 'Cero Pro',
-                              ),
-                            ),
+                            Text(email,
+                                style: textTheme.displaySmall!.copyWith(
+                                    fontSize: 15, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       )

@@ -27,4 +27,14 @@ List<Color> niceColors = const [
   Color(0xFFd35400), // Pumpkin
   Color(0xFFc0392b), // Pomegranate
   Color(0xFF7f8c8d), // Asbestos
+  Color(0xFFf0e68c), // Khaki
+  Color(0xFF7fff00), // Chartreuse
+  Color(0xFFdda0dd), // Plum
+  Color(0xFF4682b4), // Steel Blue
+  Color(0xFFb0e0e6), // Powder Blue
+  Color(0xFFdeb887), // Burlywood
+  Color(0xFF008080), // Teal
+  Color(0xFF800000), // Maroon
+  Color(0xFF008000), // Green
+  Color(0xFF800080), // Purple
 ];

@@ -252,8 +252,8 @@ class _GroupState extends State<Group> {
                                       children: [
                                         CircleAvatar(
                                           radius: 4,
-                                          backgroundColor:
-                                              niceColors[Random().nextInt(19)],
+                                          backgroundColor: niceColors[Random()
+                                              .nextInt(niceColors.length - 1)],
                                         ),
                                         const SizedBox(
                                           width: 10,

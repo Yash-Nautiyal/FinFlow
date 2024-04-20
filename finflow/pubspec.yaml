@@ -91,6 +91,10 @@ flutter:
   - images/money.svg
   - images/secure.svg
   - images/signup.svg
+  - images/food.svg
+  - images/shopping.svg
+  - images/travel.svg
+  - images/receipt.svg
   - images/visa.png
   - images/img1.png
   - images/visa-white.png

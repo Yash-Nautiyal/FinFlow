@@ -13,6 +13,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 class Screens extends StatefulWidget {
   const Screens({super.key});
   static String Name = "";
+  static String email = "";
   @override
   State<Screens> createState() => _ScreensState();
 }
@@ -48,6 +49,8 @@ class _ScreensState extends State<Screens> {
 
   void fetchDetails() async {
     final name = await retrieveData("Name");
+    final email = await retrieveData("Email");
+    Screens.email = email.toString();
     Screens.Name = name.toString();
   }
 
@@ -62,11 +65,11 @@ class _ScreensState extends State<Screens> {
               currentIndex = index;
             });
           },
-          children: const [
-            Home(),
-            Transfer(),
-            Statistics(),
-            Profile(email: 'email')
+          children: [
+            const Home(),
+            const Transfer(),
+            const Statistics(),
+            Profile(email: Screens.email)
           ],
         ),
         floatingActionButton: currentIndex != 0

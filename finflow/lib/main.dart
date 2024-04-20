@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finflow/pages/login/login.dart';
+import 'package:finflow/pages/scanner/show_items.dart';
 import 'package:finflow/screens.dart';
 import 'package:finflow/utils/firebase/firebase_options.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';

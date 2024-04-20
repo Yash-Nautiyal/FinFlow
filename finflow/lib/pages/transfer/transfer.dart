@@ -143,8 +143,8 @@ class _TransferState extends State<Transfer> {
                                       Initicon(
                                         text:
                                             "${snapshot.data![index].firstname} ${snapshot.data![index].lastname}",
-                                        backgroundColor:
-                                            niceColors[Random().nextInt(19)],
+                                        backgroundColor: niceColors[Random()
+                                            .nextInt(niceColors.length - 1)],
                                       ),
                                       const SizedBox(width: 10),
                                       Column(
