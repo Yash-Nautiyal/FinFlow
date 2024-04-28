@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finflow/pages/login/login.dart';
-import 'package:finflow/pages/scanner/show_items.dart';
 import 'package:finflow/screens.dart';
 import 'package:finflow/utils/firebase/firebase_options.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';
@@ -47,7 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final uid = snapshot.data;
-          print(uid);
           if (uid != null) {
             return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
@@ -75,11 +73,12 @@ class _SplashScreenState extends State<SplashScreen> {
             );
           } else {
             // UID is null, navigate to LoginPage
-            return LoginPage();
+            return const LoginPage();
           }
         } else {
           // Show loading indicator while waiting for data
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         }
       },
     );

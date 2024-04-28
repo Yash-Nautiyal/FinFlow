@@ -12,7 +12,7 @@ class OCRService {
 
     if (user != null) {
       final userId = user.uid;
-      var url = 'https://ocr2.asprise.com/api/v1/receipt';
+      var url = 'https://ocr.asprise.com/api/v1/receipt';
 
       // Create a multipart request
       var request = http.MultipartRequest('POST', Uri.parse(url));

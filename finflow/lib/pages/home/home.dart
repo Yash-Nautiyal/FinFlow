@@ -10,8 +10,10 @@ import 'package:finflow/pages/home/splitgroup/group.dart';
 import 'package:finflow/utils/firebase/controllers/fetch_controller.dart';
 import 'package:finflow/utils/firebase/model/user_model.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_initicon/flutter_initicon.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -95,11 +97,27 @@ class HomeState extends State<Home> {
                               style: textTheme.displayMedium!
                                   .copyWith(fontSize: 15),
                             ),
-                            Text(
-                              Screens.Name,
-                              style: textTheme.displayMedium!
-                                  .copyWith(fontSize: 20),
-                            )
+                            FutureBuilder(
+                                future: retrieveData('Name'),
+                                builder: (BuildContext context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    final name = snapshot.data;
+                                    if (name != 'null') {
+                                      return Text(
+                                        Screens.Name,
+                                        style: textTheme.displayMedium!
+                                            .copyWith(fontSize: 20),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return const Text("An error occurred");
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                })
                           ],
                         ),
                       ],
@@ -115,22 +133,59 @@ class HomeState extends State<Home> {
                       style: textTheme.displayMedium!.copyWith(fontSize: 20),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: screenwidth,
-                      height: viewall ? screenheight * .2 : screenheight * .13,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 56, 56, 56),
-                        borderRadius: BorderRadius.circular(15),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                ModalBottomSheetRoute(
+                                    builder: (context) => const CreateGroup(),
+                                    enableDrag: true,
+                                    showDragHandle: true,
+                                    isScrollControlled: true));
+                          },
+                          child: DottedBorder(
+                            strokeWidth: 1,
+                            dashPattern: const [3, 3],
+                            borderType: BorderType.RRect,
+                            radius: const Radius.circular(15),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            child: const SizedBox(
+                              width: 55,
+                              height: 55,
+                              child: Icon(FontAwesomeIcons.plus),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: viewall
-                          ? groupsGrid(fetch, screenwidth, textTheme)
-                          : firstfourgroups(
-                              context, screenwidth, textTheme, fetch),
-                    ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            width: screenwidth,
+                            height: viewall
+                                ? screenheight * .2
+                                : screenheight * .12,
+                            padding: const EdgeInsets.only(top: 8),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 56, 56, 56),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: viewall
+                                ? groupsGrid(fetch, screenwidth, textTheme)
+                                : firstfourgroups(
+                                    context, screenwidth, textTheme, fetch),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   viewall
                       ? GestureDetector(
@@ -148,7 +203,7 @@ class HomeState extends State<Home> {
                   const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0)
-                        .copyWith(top: 5),
+                        .copyWith(top: 10),
                     child: Row(
                       children: [
                         Text(
@@ -172,7 +227,7 @@ class HomeState extends State<Home> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
               sliver: recentTrasactionsGrid(
                   screenwidth, screenheight, textTheme, recent),
             ),
@@ -341,10 +396,11 @@ class HomeState extends State<Home> {
                     ),
                     Positioned(
                       top: 0,
-                      left: 27,
-                      right: 27,
+                      left: 25,
+                      right: 25,
                       child: Initicon(
-                          size: 40,
+                          elevation: 10,
+                          size: 43,
                           text: recent.keys.elementAt(index),
                           backgroundColor: niceColors[
                               Random().nextInt(niceColors.length - 1)]),
@@ -502,45 +558,18 @@ class HomeState extends State<Home> {
   FutureBuilder firstfourgroups(BuildContext context, double screenwidth,
       TextTheme textTheme, FetchController fetchController) {
     return FutureBuilder(
-        future: retrieveData("UserID"),
+        future: retrieveData("Phone"),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final userid = snapshot.data;
-            if (userid != null) {
+            final phone = snapshot.data;
+            if (phone != null) {
               return FutureBuilder<List<UserModal3>>(
-                  future: fetchController.getallgroups("${userid}Groups"),
+                  future: fetchController.getGroupForPhonenumber(phone),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                         return Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    ModalBottomSheetRoute(
-                                        builder: (context) =>
-                                            const CreateGroup(),
-                                        enableDrag: true,
-                                        showDragHandle: true,
-                                        isScrollControlled: true));
-                              },
-                              child: DottedBorder(
-                                strokeWidth: 1,
-                                dashPattern: const [3, 3],
-                                borderType: BorderType.RRect,
-                                radius: const Radius.circular(15),
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                child: const SizedBox(
-                                  width: 55,
-                                  height: 55,
-                                  child: Icon(FontAwesomeIcons.plus),
-                                ),
-                              ),
-                            ),
                             const SizedBox(width: 5),
                             Expanded(
                               child: Row(
@@ -552,6 +581,9 @@ class HomeState extends State<Home> {
                                     final containerSize = screenwidth / 7.7;
                                     return Row(
                                       children: [
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
                                         GestureDetector(
                                           onTap: () {
                                             Navigator.push(
@@ -563,68 +595,80 @@ class HomeState extends State<Home> {
                                                           title: snapshot
                                                               .data![index]
                                                               .grpname,
-                                                          bgimage:
-                                                              groupBackground[
-                                                                  index],
+                                                          bgimage: snapshot
+                                                              .data![index]
+                                                              .image,
                                                         )));
                                           },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Container(
-                                                    width: containerSize,
-                                                    height: containerSize,
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: AssetImage(
-                                                              groupBackground[
-                                                                  index])),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
+                                          child: SizedBox(
+                                            width: containerSize + 10,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Container(
+                                                      width: containerSize,
+                                                      height: containerSize,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8),
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: AssetImage(
+                                                                snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .image)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                      ),
                                                     ),
+                                                    Positioned(
+                                                        top: 0,
+                                                        right: 0,
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(6),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: green,
+                                                                  shape: BoxShape
+                                                                      .circle),
+                                                        ))
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    snapshot
+                                                        .data![index].grpname,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: textTheme
+                                                        .displaySmall!
+                                                        .copyWith(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                   ),
-                                                  Positioned(
-                                                      top: 0,
-                                                      right: 0,
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(6),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: green,
-                                                                shape: BoxShape
-                                                                    .circle),
-                                                      ))
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 2,
-                                              ),
-                                              Text(
-                                                snapshot.data![index].grpname,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: textTheme.displaySmall!
-                                                    .copyWith(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Owe:\$100",
-                                                style: textTheme.displaySmall!
-                                                    .copyWith(
-                                                        color: Colors.red,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
+                                                ),
+                                                Text(
+                                                  "Owe:\$100",
+                                                  style: textTheme.displaySmall!
+                                                      .copyWith(
+                                                          color: Colors.red,
+                                                          fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(
@@ -654,32 +698,7 @@ class HomeState extends State<Home> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error Loading Data'));
                       } else {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                ModalBottomSheetRoute(
-                                    builder: (context) => const CreateGroup(),
-                                    enableDrag: true,
-                                    showDragHandle: true,
-                                    isScrollControlled: true));
-                          },
-                          child: DottedBorder(
-                            strokeWidth: 1,
-                            dashPattern: const [3, 3],
-                            borderType: BorderType.RRect,
-                            radius: const Radius.circular(15),
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                            child: const SizedBox(
-                              width: 55,
-                              height: 55,
-                              child: Icon(FontAwesomeIcons.plus),
-                            ),
-                          ),
-                        );
+                        return SizedBox.shrink();
                       }
                     } else {
                       return Center(

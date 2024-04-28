@@ -17,9 +17,37 @@ class UserRepository extends GetxController {
     await _db.collection("${currentUserId}Transtactions").add(user.toJson());
   }
 
+  Future<void> makeGroupTransaction(String documentId,
+      Map<String, Map<String, dynamic>> transactionData) async {
+    final transactionRef = _db.collection("Groups").doc(documentId);
+
+    // Update the document with the provided transactionData
+    await transactionRef.update({
+      'Transactions': transactionData,
+    });
+  }
+
+  Future<void> addGroupDues(String documentId,
+      Map<String, Map<String, dynamic>> transactionData) async {
+    final transactionRef = _db.collection("Groups").doc(documentId);
+
+    // Update the document with the provided transactionData
+    await transactionRef.update({
+      'Dues': transactionData,
+    });
+  }
+
   addgroup(UserModal3 user) async {
     final currentUserId = await retrieveData("UserID");
     await _db.collection("${currentUserId}Groups").add(user.toJson());
+  }
+
+  addtoAllgroups(UserModal3 user) async {
+    await _db.collection("Groups").add(user.toJson());
+  }
+
+  addtoAllTransactions(UserModal4 user) async {
+    await _db.collection("Transaction").add(user.toJson());
   }
 
   createuser(UserModal user) async {
@@ -67,10 +95,10 @@ class UserRepository extends GetxController {
   }
 
   Future<UserModal3> getGroupDetails(String documentName) async {
-    final currentUserId = await retrieveData("UserID");
-
+/*     final currentUserId = await retrieveData("UserID");
+ */
     final snapshot = await _db
-        .collection("${currentUserId}Groups")
+        .collection("Groups")
         .doc(documentName) // Use doc() with the provided document name
         .get();
 
@@ -80,5 +108,59 @@ class UserRepository extends GetxController {
     } else {
       throw Exception("Document not found");
     }
+  }
+
+  Future<List<UserModal3>> getGroupForTransaction(
+      String phoneNumber, String mynumber) async {
+    // Query all groups of the current user
+    final groupsSnapshot = await _db.collection("Groups").get();
+
+    final List<UserModal3> matchingGroups = [];
+
+    for (final groupDoc in groupsSnapshot.docs) {
+      final groupData = groupDoc.data();
+
+      // Check if the group has members
+      if (groupData.containsKey("Memebers")) {
+        final members = Map<String, dynamic>.from(groupData["Memebers"]);
+
+        // Check if mynumber and phoneNumber are present in the group's members
+        if (members.containsValue(mynumber) &&
+            members.containsValue(phoneNumber)) {
+          // If found, convert to UserModal3 and add to the list
+          final groupDetails = UserModal3.fromSnapshot(groupDoc);
+          matchingGroups.add(groupDetails);
+        }
+      }
+    }
+
+    // Return the list of all matching groups, or an empty list if none found
+    return matchingGroups;
+  }
+
+  Future<List<UserModal3>> getGroupsForPhoneNumber(String phoneNumber) async {
+    List<UserModal3> userGroups = [];
+
+    final snapshot = await _db.collection("Groups").get();
+    final userData =
+        snapshot.docs.map((e) => UserModal3.fromSnapshot(e)).toList();
+
+    for (var user in userData) {
+      // Iterate through each group's members to check if the phoneNumber is present
+      bool phoneNumberFound = false;
+      user.member.forEach((key, value) {
+        if (value.toString().replaceAll('+91', '').replaceAll(' ', '') ==
+            phoneNumber.replaceAll('+91', '').replaceAll(' ', '')) {
+          phoneNumberFound = true;
+        }
+      });
+
+      // If phoneNumber is found in the group, add it to the list
+      if (phoneNumberFound) {
+        userGroups.add(user);
+      }
+    }
+
+    return userGroups;
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:finflow/pages/home/widgets/name_Image.dart';
+import 'package:finflow/pages/login/login.dart';
 import 'package:finflow/screens.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:flutter/material.dart';
@@ -263,13 +264,13 @@ class _ProfileState extends State<Profile> {
                                                             MaterialStatePropertyAll(
                                                                 purple)),
                                                     onPressed: () {
-                                                      /* Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              SecondLandingPage(),
-                                                        ),
-                                                      ); */
+                                                      Navigator.pushReplacement(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    LoginPage(),
+                                                          ));
                                                     },
                                                     child: Text(
                                                       'Log out',

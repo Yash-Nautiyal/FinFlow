@@ -14,6 +14,13 @@ class PieChartSample3 extends StatefulWidget {
 }
 
 class PieChartSample3State extends State {
+  Color case1 = niceColors.elementAt(Random().nextInt(niceColors.length - 1));
+  Color case2 = niceColors.elementAt(Random().nextInt(niceColors.length - 1));
+
+  Color case3 = niceColors.elementAt(Random().nextInt(niceColors.length - 1));
+
+  Color case4 = niceColors.elementAt(Random().nextInt(niceColors.length - 1));
+
   int touchedIndex = 0;
 
   @override
@@ -61,8 +68,7 @@ class PieChartSample3State extends State {
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color:
-                niceColors.elementAt(Random().nextInt(niceColors.length - 1)),
+            color: case4,
             value: 40,
             title: '40%',
             radius: radius,
@@ -81,8 +87,7 @@ class PieChartSample3State extends State {
           );
         case 1:
           return PieChartSectionData(
-            color:
-                niceColors.elementAt(Random().nextInt(niceColors.length - 1)),
+            color: case1,
             value: 30,
             title: '30%',
             radius: radius,
@@ -101,8 +106,7 @@ class PieChartSample3State extends State {
           );
         case 2:
           return PieChartSectionData(
-            color:
-                niceColors.elementAt(Random().nextInt(niceColors.length - 1)),
+            color: case2,
             value: 16,
             title: '16%',
             radius: radius,
@@ -121,8 +125,7 @@ class PieChartSample3State extends State {
           );
         case 3:
           return PieChartSectionData(
-            color:
-                niceColors.elementAt(Random().nextInt(niceColors.length - 1)),
+            color: case3,
             value: 15,
             title: '15%',
             radius: radius,

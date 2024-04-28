@@ -14,6 +14,8 @@ class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
 
   static String userUid = "";
+  static String name = "";
+  static String phone = "";
 
   @override
   State<MyVerify> createState() => _MyVerifyState();
@@ -142,6 +144,7 @@ class _MyVerifyState extends State<MyVerify> {
                         saveData('Name', "${LoginPage.fn} ${LoginPage.ln}");
                         saveData('Email', LoginPage.email);
                         saveData('Phone', MyPhone.phno);
+
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

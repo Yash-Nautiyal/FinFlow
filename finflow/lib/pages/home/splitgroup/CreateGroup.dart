@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:finflow/pages/home/splitgroup/chips.dart';
+import 'package:finflow/screens.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/utils/firebase/controllers/Add_controller.dart';
 import 'package:finflow/utils/firebase/model/user_model.dart';
@@ -28,10 +31,34 @@ class _CreateGroupState extends State<CreateGroup> {
   String grpname = '';
   String kPickedNmber = '';
   String kPickedName = '';
-  Map<String, String> members = {};
+  Map<String, String> members = {
+    Screens.Name: Screens.phonenumber.replaceAll('+91', '').replaceAll(' ', '')
+  };
+  Map<String, Color> memberscolor = {};
+
   PhoneContact? _phoneContact;
   @override
   Widget build(BuildContext context) {
+    List<String> filters = [
+      'Trip',
+      'Shopping',
+      'Dinning',
+      'Entertainment',
+      'Club',
+      'Others'
+    ];
+    List<String> polyimages = [
+      'images/poly/poly1.png',
+      'images/poly/poly2.png',
+      'images/poly/poly3.png',
+      'images/poly/poly4.png',
+      'images/poly/poly5.png',
+      'images/poly/poly6.png',
+      'images/poly/poly7.png',
+      'images/poly/poly8.png',
+      'images/poly/poly9.png',
+      'images/poly/poly10.jpg'
+    ];
     TextTheme textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -57,18 +84,7 @@ class _CreateGroupState extends State<CreateGroup> {
                     KenBurnsAnimation.leftToRight,
                     KenBurnsAnimation.rightToLeft
                   ],
-                  images: const [
-                    'images/poly/poly1.png',
-                    'images/poly/poly2.png',
-                    'images/poly/poly3.png',
-                    'images/poly/poly4.png',
-                    'images/poly/poly5.png',
-                    'images/poly/poly6.png',
-                    'images/poly/poly7.png',
-                    'images/poly/poly8.png',
-                    'images/poly/poly9.png',
-                    'images/poly/poly10.jpg',
-                  ],
+                  images: polyimages,
                 ),
               ),
             ),
@@ -158,6 +174,8 @@ class _CreateGroupState extends State<CreateGroup> {
                       ],
                     ),
                     ListOfChips(
+                      firstselected: false,
+                      filters: filters,
                       onFiltersChanged: (filters) {
                         selectedFilter = filters;
                       },
@@ -191,8 +209,9 @@ class _CreateGroupState extends State<CreateGroup> {
                                     kPickedNmber.isNotEmpty) {
                                   if (!members.containsKey(kPickedName)) {
                                     setState(() {
-                                      members[kPickedName] = kPickedNmber;
-                                      print(members);
+                                      members[kPickedName] = kPickedNmber
+                                          .replaceAll('+91', '')
+                                          .replaceAll(' ', '');
                                     });
                                   }
                                 }
@@ -234,57 +253,79 @@ class _CreateGroupState extends State<CreateGroup> {
                       child: SizedBox(
                         width: screenWidth * .53,
                         child: ListView.builder(
-                          itemCount: members.length,
+                          itemCount: members.length - 1,
                           itemBuilder: (context, index) {
-                            String memberName = members.keys.elementAt(index);
+                            String memberName =
+                                members.keys.elementAt(index + 1);
                             String memberNumber =
-                                members.values.elementAt(index);
-                            members.values.elementAt(index);
+                                members.values.elementAt(index + 1);
+                            // Maintain a list of used colors to prevent duplicates
+                            final usedColors = <Color>{};
+
+                            Color randomColor;
+                            do {
+                              randomColor = Color.fromARGB(
+                                255,
+                                Random().nextInt(256),
+                                Random().nextInt(256),
+                                Random().nextInt(256),
+                              );
+                            } while (usedColors.contains(randomColor));
+
+                            usedColors.add(randomColor);
+                            if (!memberscolor.containsKey(memberName)) {
+                              memberscolor[memberName] = randomColor;
+                            }
                             return SizedBox(
-                                width: 300,
-                                height: 70,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const CircleAvatar(
-                                      radius: 20,
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            memberName,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textTheme.displaySmall!
-                                                .copyWith(
-                                                    fontSize: 15,
-                                                    color: purple),
+                              width: 300,
+                              height: 70,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor:
+                                        memberscolor.values.elementAt(index),
+                                    child: const Icon(Icons.person),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          memberName,
+                                          overflow: TextOverflow.ellipsis,
+                                          style:
+                                              textTheme.displaySmall!.copyWith(
+                                            fontSize: 15,
+                                            color: purple,
                                           ),
-                                          Text(
-                                            memberNumber,
-                                            style: textTheme.displaySmall!
-                                                .copyWith(fontSize: 15),
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                        Text(
+                                          memberNumber,
+                                          style: textTheme.displaySmall!
+                                              .copyWith(fontSize: 15),
+                                        ),
+                                      ],
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            members.remove(memberName);
-                                          });
-                                        },
-                                        child: const Icon(Icons.close_rounded))
-                                  ],
-                                ));
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        members.remove(memberName);
+                                        memberscolor.remove(memberName);
+                                      });
+                                    },
+                                    child: const Icon(Icons.close_rounded),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -296,8 +337,13 @@ class _CreateGroupState extends State<CreateGroup> {
                           UserModal3 user = UserModal3(
                               grpname: grpname,
                               moto: selectedFilter[0].toString(),
-                              member: members);
+                              member: members,
+                              transactions: {},
+                              dues: {},
+                              image: polyimages.elementAt(
+                                  Random().nextInt(polyimages.length - 1)));
                           final add = Get.put(AddController());
+                          add.addToAllGroups(user);
                           add.addGroup(user);
                           Navigator.pop(context);
                         },

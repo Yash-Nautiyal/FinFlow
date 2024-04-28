@@ -30,4 +30,13 @@ class FetchController extends GetxController {
   Future<List<UserModal4>> getalltransactions(String uid) async {
     return await _user.getalltransactions(uid);
   }
+
+  Future<List<UserModal3>> getGroupForPhonenumber(String phonenumber) async {
+    return await _user.getGroupsForPhoneNumber(phonenumber);
+  }
+
+  Future<List<UserModal3?>> getGroupForTransaction(
+      String phonenumber, String mynumber) async {
+    return await _user.getGroupForTransaction(phonenumber, mynumber);
+  }
 }
