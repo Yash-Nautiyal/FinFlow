@@ -74,9 +74,15 @@ class UserModal3 {
   final String grpname;
   final String moto;
   final Map member;
+  final String image;
+  final Map transactions;
+  final Map dues;
 
   const UserModal3({
     this.id,
+    required this.transactions,
+    required this.dues,
+    required this.image,
     required this.grpname,
     required this.moto,
     required this.member,
@@ -87,6 +93,9 @@ class UserModal3 {
       "GroupName": grpname,
       "Moto": moto,
       "Memebers": member,
+      "ImageUrl": image,
+      "Transactions": transactions,
+      "Dues": dues,
     };
   }
 
@@ -94,11 +103,13 @@ class UserModal3 {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return UserModal3(
-      id: document.id,
-      grpname: data["GroupName"],
-      moto: data["Moto"],
-      member: data["Memebers"],
-    );
+        id: document.id,
+        grpname: data["GroupName"],
+        moto: data["Moto"],
+        member: data["Memebers"],
+        image: data['ImageUrl'],
+        transactions: data["Transactions"],
+        dues: data["Dues"]);
   }
 }
 

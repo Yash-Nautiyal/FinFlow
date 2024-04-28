@@ -1,3 +1,5 @@
+import 'package:finflow/services/chat_service.dart';
+import 'package:finflow/utils/firebase/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -11,6 +13,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  late String? userid = "";
   bool waitingforResponse = false;
   TextEditingController textFieldController = TextEditingController();
   List<Widget> list = [];
@@ -24,11 +27,11 @@ class _ChatState extends State<Chat> {
     }
   }
 
-  void updateChat(String message, String sender) {
+  void updateChat(String message, String sender) async {
     setState(() {
       newchats[message] = sender;
-      newchats['Assistant reply to: $message'] = 'Assistant';
     });
+    newchats['reply'] = "Assistant";
   }
 
   Widget anstext(String? text) {
@@ -68,7 +71,7 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  Widget newtext(String text) {
+  Widget usertext(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -168,7 +171,7 @@ class _ChatState extends State<Chat> {
                             final sender = newchats[message];
                             return sender == 'Assistant'
                                 ? anstext(message)
-                                : newtext(message!);
+                                : usertext(message!);
                           },
                         ),
                       ),

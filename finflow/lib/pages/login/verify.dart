@@ -14,6 +14,8 @@ class MyVerify extends StatefulWidget {
   const MyVerify({Key? key}) : super(key: key);
 
   static String userUid = "";
+  static String name = "";
+  static String phone = "";
 
   @override
   State<MyVerify> createState() => _MyVerifyState();
@@ -128,10 +130,7 @@ class _MyVerifyState extends State<MyVerify> {
                             await auth.signInWithCredential(credential);
                         final String userid = userCredential.user!.uid;
                         MyVerify.userUid = userid;
-                        saveData('UserID', userid);
-                        saveData('Name', "${LoginPage.fn} ${LoginPage.ln}");
-                        saveData('Email', LoginPage.email);
-                        saveData('Phone', MyPhone.phno);
+
                         final user = UserModal2(
                           firstname: LoginPage.fn.toString().trim(),
                           lastname: LoginPage.ln.toString().trim(),
@@ -141,6 +140,10 @@ class _MyVerifyState extends State<MyVerify> {
 
                         final add = Get.put(AddController());
                         add.addUser(user, userid);
+                        saveData('UserID', userid);
+                        saveData('Name', "${LoginPage.fn} ${LoginPage.ln}");
+                        saveData('Email', LoginPage.email);
+                        saveData('Phone', MyPhone.phno);
 
                         Navigator.pushAndRemoveUntil(
                             context,

@@ -4,13 +4,17 @@ import 'package:finflow/pages/profile/profile.dart';
 import 'package:finflow/pages/scanner/scan.dart';
 import 'package:finflow/pages/stats/stats_screen.dart';
 import 'package:finflow/pages/transfer/transfer.dart';
+import 'package:finflow/utils/Colors/colors.dart';
+import 'package:finflow/utils/firebase/shared_preference.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 
 class Screens extends StatefulWidget {
   const Screens({super.key});
-
+  static String Name = "";
+  static String email = "";
+  static String phonenumber = "";
   @override
   State<Screens> createState() => _ScreensState();
 }
@@ -24,6 +28,7 @@ class _ScreensState extends State<Screens> {
   void initState() {
     super.initState();
     pageController = PageController();
+    fetchDetails();
   }
 
   @override
@@ -43,6 +48,15 @@ class _ScreensState extends State<Screens> {
     });
   }
 
+  void fetchDetails() async {
+    final name = await retrieveData("Name");
+    final email = await retrieveData("Email");
+    final phno = await retrieveData("Phone");
+    Screens.email = email.toString();
+    Screens.Name = name.toString();
+    Screens.phonenumber = phno.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -54,11 +68,11 @@ class _ScreensState extends State<Screens> {
               currentIndex = index;
             });
           },
-          children: const [
-            Home(),
-            Transfer(),
-            Statistics(),
-            Profile(email: 'email')
+          children: [
+            const Home(),
+            const Transfer(),
+            const Statistics(),
+            Profile(email: Screens.email)
           ],
         ),
         floatingActionButton: currentIndex != 0
@@ -140,7 +154,9 @@ class _ScreensState extends State<Screens> {
                       elevation: 10,
                       shape: const CircleBorder(),
                       child: IconButton.filled(
-                        autofocus: true,
+                        style: ButtonStyle(
+                            shape: MaterialStatePropertyAll(
+                                CircleBorder(side: BorderSide(color: purple)))),
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -182,7 +198,9 @@ class _ScreensState extends State<Screens> {
                             style: const ButtonStyle(
                                 side: MaterialStatePropertyAll(
                                     BorderSide(style: BorderStyle.none))),
-                            onPressed: () {},
+                            onPressed: () {
+                              _onBottomNavBarTapped(3);
+                            },
                             icon: const Icon(
                               Boxicons.bx_user,
                               size: 27,

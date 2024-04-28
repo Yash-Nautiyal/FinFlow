@@ -61,6 +61,8 @@ dependencies:
   flutter_initicon: ^3.0.0+1
   flutter_spinkit: ^5.2.1
   http: ^1.2.1
+  intl: ^0.17.0
+
 
 
 dev_dependencies:
@@ -91,6 +93,10 @@ flutter:
   - images/money.svg
   - images/secure.svg
   - images/signup.svg
+  - images/food.svg
+  - images/shopping.svg
+  - images/travel.svg
+  - images/receipt.svg
   - images/visa.png
   - images/img1.png
   - images/visa-white.png

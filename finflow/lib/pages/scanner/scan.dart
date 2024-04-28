@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:finflow/pages/scanner/show_items.dart';
 import 'package:finflow/services/ocr_service.dart';
+import 'package:finflow/utils/Colors/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -49,6 +52,7 @@ class _ScanState extends State<Scan> {
 
   bool scanQr = true;
   bool scanReceipts = false;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class _ScanState extends State<Scan> {
                 children: [
                   GestureDetector(
                     onTap: () {},
-                    child: buildResult(),
+                    child: buildResult(textTheme),
                   ),
                   const SizedBox(
                     height: 9,
@@ -161,9 +165,23 @@ class _ScanState extends State<Scan> {
                   ),
                 ],
               )
-            : Image.file(
-                selectedImage!,
-                fit: BoxFit.contain,
+            : Stack(
+                children: [
+                  Image.file(
+                    selectedImage!,
+                    fit: BoxFit.contain,
+                  ),
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedImage = null;
+                            });
+                          },
+                          child: Icon(Icons.close_rounded)))
+                ],
               ),
       ),
     );
@@ -184,15 +202,6 @@ class _ScanState extends State<Scan> {
       setState(() {
         selectedImage = File(pickedImage.path);
       });
-      // Call OCRService to perform OCR on the selected image
-      /* final ocrData = await OCRService.performOCR(selectedImage!);
-      if (ocrData != null) {
-        // Handle OCR response here
-        print('OCR Data: $ocrData');
-      } else {
-        // Handle case when OCR service returns null (error occurred)
-        print('OCR Service returned null');
-      } */
     }
   }
 
@@ -298,40 +307,66 @@ class _ScanState extends State<Scan> {
           ],
         );
 
-  Widget buildResult() => Container(
-        padding: const EdgeInsets.all(12),
+  Widget buildResult(TextTheme textTheme) => Container(
         decoration: BoxDecoration(
             color: Colors.white24, borderRadius: BorderRadius.circular(8)),
         child: scanReceipts
             ? TextButton(
                 onPressed: () async {
                   if (selectedImage != null) {
-                    
+                    setState(() {
+                      loading = true;
+                    });
                     final combinedData =
                         await OCRService.processReceipt(selectedImage as File);
-                    if (combinedData != null) {
+                    setState(() {
+                      loading = false;
+                    });
+                    combinedData == null
+                        ? showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "Maximum Limit Reached",
+                                  style: textTheme.displayMedium!.copyWith(
+                                      fontSize: 20, color: Colors.redAccent),
+                                ),
+                                content: Text(
+                                  "Try again later!",
+                                  style: textTheme.displayMedium!.copyWith(
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ShowItems(data: combinedData),
+                            ));
+                    /*  if (combinedData != null) {
                       await OCRService.sendDataToPythonAPI(combinedData);
-                    }
-
-                    /* final ocrData = await OCRService.performOCR(
-                        selectedImage!.path as File);
-                    if (ocrData != null) {
-                      print(ocrData);
-                      // Handle OCR data, e.g., navigate to the next screen with OCR data
-                      // Navigator.push(
-                      //context,
-                      ///MaterialPageRoute(builder: (context) => NextScreen(ocrData: ocrData)),
-                      //);
-                    } else {
-                      // Handle case when OCR service returns null (error occurred)
-                      print('OCR Service returned null');
                     } */
                   } else {
-                    // Handle case when no image is selected
                     print('No image selected');
                   }
                 },
-                child: Text('Next'),
+                child: loading
+                    ? SpinKitCircle(
+                        color: purple,
+                      )
+                    : Text('Next'),
               )
             : Text(
                 barcode != null ? "Result: ${barcode!.code}" : "Scan a code!",

@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class ListOfChips extends StatefulWidget {
   final Function(List<String>) onFiltersChanged;
-
-  const ListOfChips({Key? key, required this.onFiltersChanged})
+  final List<String> filters;
+  final bool firstselected;
+  const ListOfChips(
+      {Key? key,
+      required this.onFiltersChanged,
+      required this.filters,
+      required this.firstselected})
       : super(key: key);
 
   @override
@@ -12,19 +17,11 @@ class ListOfChips extends StatefulWidget {
 }
 
 class _ListOfChipsState extends State<ListOfChips> {
-  List<String> filters = [
-    'Trip',
-    'Shopping',
-    'Health',
-    'Science',
-    'Sports',
-    'Technology'
-  ];
   late List<String> selectedFilter;
   @override
   void initState() {
     super.initState();
-    selectedFilter = [];
+    selectedFilter = widget.firstselected ? [widget.filters[0]] : [];
   }
 
   @override
@@ -36,9 +33,9 @@ class _ListOfChipsState extends State<ListOfChips> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const ClampingScrollPhysics(),
-        itemCount: filters.length,
+        itemCount: widget.filters.length,
         itemBuilder: (context, index) {
-          final filter = filters[index];
+          final filter = widget.filters[index];
           return Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: GestureDetector(

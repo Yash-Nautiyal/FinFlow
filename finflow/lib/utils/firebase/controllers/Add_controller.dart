@@ -14,6 +14,20 @@ class AddController extends GetxController {
     await userRepo.addgroup(user);
   }
 
+  Future<void> addToAllGroups(UserModal3 user) async {
+    await userRepo.addtoAllgroups(user);
+  }
+
+  Future<void> makeGroupTransaction(
+      String docid, Map<String, Map<String, dynamic>> data) async {
+    await userRepo.makeGroupTransaction(docid, data);
+  }
+
+  Future<void> addGroupDues(
+      String docid, Map<String, Map<String, dynamic>> data) async {
+    await userRepo.addGroupDues(docid, data);
+  }
+
   Future<void> addUser(UserModal2 user2, String useruid) async {
     await userRepo.adduser(user2, useruid);
   }

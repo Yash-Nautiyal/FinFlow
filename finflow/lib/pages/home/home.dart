@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:finflow/pages/home/creditcard/swiper.dart';
+import 'package:finflow/pages/home/widgets/name_image.dart';
+import 'package:finflow/screens.dart';
 import 'package:finflow/utils/Colors/colors.dart';
 import 'package:finflow/pages/home/creditcard/credit_card.dart';
 import 'package:finflow/pages/home/splitgroup/CreateGroup.dart';
@@ -8,8 +10,10 @@ import 'package:finflow/pages/home/splitgroup/group.dart';
 import 'package:finflow/utils/firebase/controllers/fetch_controller.dart';
 import 'package:finflow/utils/firebase/model/user_model.dart';
 import 'package:finflow/utils/firebase/shared_preference.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_initicon/flutter_initicon.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -59,6 +63,13 @@ class HomeState extends State<Home> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
+    Map<String, String> recent = {
+      'Kabir Yadav': '-\$100',
+      'Palash Dey': '+\$20',
+      'Shrey Goel': '+\$104',
+      'Kshitiz Saxena': '-\$150',
+      'Mohit Roy': '-\$300'
+    };
 
     return SafeArea(
       child: Scaffold(
@@ -74,22 +85,7 @@ class HomeState extends State<Home> {
                         .copyWith(top: 15),
                     child: Row(
                       children: [
-                        FutureBuilder<Center>(
-                          future: username(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<Center?> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Center(
-                                  child: Text('Error: ${snapshot.error}'));
-                            } else {
-                              return snapshot.data ??
-                                  Center(child: Text('No data'));
-                            }
-                          },
-                        ),
+                        nameimage(45),
                         const SizedBox(
                           width: 9,
                         ),
@@ -101,23 +97,27 @@ class HomeState extends State<Home> {
                               style: textTheme.displayMedium!
                                   .copyWith(fontSize: 15),
                             ),
-                            FutureBuilder<Text>(
-                              future: nameText(textTheme),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Text?> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                      child: Text('Error: ${snapshot.error}'));
-                                } else {
-                                  return snapshot.data ??
-                                      Center(child: Text('No data'));
-                                }
-                              },
-                            ),
+                            FutureBuilder(
+                                future: retrieveData('Name'),
+                                builder: (BuildContext context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    final name = snapshot.data;
+                                    if (name != 'null') {
+                                      return Text(
+                                        Screens.Name,
+                                        style: textTheme.displayMedium!
+                                            .copyWith(fontSize: 20),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return const Text("An error occurred");
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                })
                           ],
                         ),
                       ],
@@ -133,22 +133,59 @@ class HomeState extends State<Home> {
                       style: textTheme.displayMedium!.copyWith(fontSize: 20),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: screenwidth,
-                      height: viewall ? screenheight * .2 : screenheight * .13,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 56, 56, 56),
-                        borderRadius: BorderRadius.circular(15),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                ModalBottomSheetRoute(
+                                    builder: (context) => const CreateGroup(),
+                                    enableDrag: true,
+                                    showDragHandle: true,
+                                    isScrollControlled: true));
+                          },
+                          child: DottedBorder(
+                            strokeWidth: 1,
+                            dashPattern: const [3, 3],
+                            borderType: BorderType.RRect,
+                            radius: const Radius.circular(15),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            child: const SizedBox(
+                              width: 55,
+                              height: 55,
+                              child: Icon(FontAwesomeIcons.plus),
+                            ),
+                          ),
+                        ),
                       ),
-                      child: viewall
-                          ? groupsGrid(fetch, screenwidth, textTheme)
-                          : firstfourgroups(
-                              context, screenwidth, textTheme, fetch),
-                    ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            width: screenwidth,
+                            height: viewall
+                                ? screenheight * .2
+                                : screenheight * .12,
+                            padding: const EdgeInsets.only(top: 8),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 56, 56, 56),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: viewall
+                                ? groupsGrid(fetch, screenwidth, textTheme)
+                                : firstfourgroups(
+                                    context, screenwidth, textTheme, fetch),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   viewall
                       ? GestureDetector(
@@ -166,7 +203,7 @@ class HomeState extends State<Home> {
                   const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0)
-                        .copyWith(top: 5),
+                        .copyWith(top: 10),
                     child: Row(
                       children: [
                         Text(
@@ -190,31 +227,13 @@ class HomeState extends State<Home> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              sliver:
-                  recentTrasactionsGrid(screenwidth, screenheight, textTheme),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              sliver: recentTrasactionsGrid(
+                  screenwidth, screenheight, textTheme, recent),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Future<Center> username() async {
-    final name = await retrieveData("Name");
-    return Center(
-      child: Initicon(
-          text: name.toString(),
-          backgroundColor: niceColors[Random().nextInt(19)]),
-    );
-  }
-
-  Future<Text> nameText(TextTheme textTheme) async {
-    final name = await retrieveData("Name");
-    return Text(
-      name.toString(),
-      style: textTheme.displayMedium!
-          .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
     );
   }
 
@@ -315,8 +334,8 @@ class HomeState extends State<Home> {
         ));
   }
 
-  AnimationLimiter recentTrasactionsGrid(
-      double screenwidth, double screenheight, TextTheme textTheme) {
+  AnimationLimiter recentTrasactionsGrid(double screenwidth,
+      double screenheight, TextTheme textTheme, Map<String, String> recent) {
     return AnimationLimiter(
       child: SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -339,45 +358,59 @@ class HomeState extends State<Home> {
                       top: 20,
                       left: 5,
                       right: 5,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5)
-                            .copyWith(top: 25),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color.fromARGB(255, 56, 56, 56),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Yash Nautiyal",
-                              textAlign: TextAlign.center,
-                              style: textTheme.displaySmall!.copyWith(
-                                  fontSize: 13, fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                      child: Material(
+                        elevation: 9,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5)
+                              .copyWith(top: 25, bottom: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: const Color.fromARGB(255, 56, 56, 56),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                recent.keys.elementAt(index).split(" ")[0],
+                                textAlign: TextAlign.center,
+                                style: textTheme.displaySmall!
+                                    .copyWith(fontSize: 17, color: white),
+                              ),
+                              const Spacer(),
+                              Text(
+                                recent.values.elementAt(index),
+                                textAlign: TextAlign.center,
+                                style: textTheme.displaySmall!.copyWith(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: recent.values
+                                            .elementAt(index)
+                                            .startsWith("-")
+                                        ? Colors.redAccent
+                                        : green),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     Positioned(
                       top: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colors[0],
-                        ),
-                      ),
+                      left: 25,
+                      right: 25,
+                      child: Initicon(
+                          elevation: 10,
+                          size: 43,
+                          text: recent.keys.elementAt(index),
+                          backgroundColor: niceColors[
+                              Random().nextInt(niceColors.length - 1)]),
                     ),
                   ],
                 ),
               ),
             );
           },
-          childCount: 7,
+          childCount: recent.length,
         ),
       ),
     );
@@ -525,45 +558,18 @@ class HomeState extends State<Home> {
   FutureBuilder firstfourgroups(BuildContext context, double screenwidth,
       TextTheme textTheme, FetchController fetchController) {
     return FutureBuilder(
-        future: retrieveData("UserID"),
+        future: retrieveData("Phone"),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final userid = snapshot.data;
-            if (userid != null) {
+            final phone = snapshot.data;
+            if (phone != null) {
               return FutureBuilder<List<UserModal3>>(
-                  future: fetchController.getallgroups("${userid}Groups"),
+                  future: fetchController.getGroupForPhonenumber(phone),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                         return Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    ModalBottomSheetRoute(
-                                        builder: (context) =>
-                                            const CreateGroup(),
-                                        enableDrag: true,
-                                        showDragHandle: true,
-                                        isScrollControlled: true));
-                              },
-                              child: DottedBorder(
-                                strokeWidth: 1,
-                                dashPattern: const [3, 3],
-                                borderType: BorderType.RRect,
-                                radius: const Radius.circular(15),
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                                child: const SizedBox(
-                                  width: 55,
-                                  height: 55,
-                                  child: Icon(FontAwesomeIcons.plus),
-                                ),
-                              ),
-                            ),
                             const SizedBox(width: 5),
                             Expanded(
                               child: Row(
@@ -575,6 +581,9 @@ class HomeState extends State<Home> {
                                     final containerSize = screenwidth / 7.7;
                                     return Row(
                                       children: [
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
                                         GestureDetector(
                                           onTap: () {
                                             Navigator.push(
@@ -586,68 +595,80 @@ class HomeState extends State<Home> {
                                                           title: snapshot
                                                               .data![index]
                                                               .grpname,
-                                                          bgimage:
-                                                              groupBackground[
-                                                                  index],
+                                                          bgimage: snapshot
+                                                              .data![index]
+                                                              .image,
                                                         )));
                                           },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Container(
-                                                    width: containerSize,
-                                                    height: containerSize,
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: AssetImage(
-                                                              groupBackground[
-                                                                  index])),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
+                                          child: SizedBox(
+                                            width: containerSize + 10,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    Container(
+                                                      width: containerSize,
+                                                      height: containerSize,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8),
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: AssetImage(
+                                                                snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .image)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                      ),
                                                     ),
+                                                    Positioned(
+                                                        top: 0,
+                                                        right: 0,
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(6),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: green,
+                                                                  shape: BoxShape
+                                                                      .circle),
+                                                        ))
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    snapshot
+                                                        .data![index].grpname,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: textTheme
+                                                        .displaySmall!
+                                                        .copyWith(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                   ),
-                                                  Positioned(
-                                                      top: 0,
-                                                      right: 0,
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(6),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                color: green,
-                                                                shape: BoxShape
-                                                                    .circle),
-                                                      ))
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 2,
-                                              ),
-                                              Text(
-                                                snapshot.data![index].grpname,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: textTheme.displaySmall!
-                                                    .copyWith(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                              ),
-                                              Text(
-                                                "Owe:\$100",
-                                                style: textTheme.displaySmall!
-                                                    .copyWith(
-                                                        color: Colors.red,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
+                                                ),
+                                                Text(
+                                                  "Owe:\$100",
+                                                  style: textTheme.displaySmall!
+                                                      .copyWith(
+                                                          color: Colors.red,
+                                                          fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(
@@ -677,32 +698,7 @@ class HomeState extends State<Home> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error Loading Data'));
                       } else {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                ModalBottomSheetRoute(
-                                    builder: (context) => const CreateGroup(),
-                                    enableDrag: true,
-                                    showDragHandle: true,
-                                    isScrollControlled: true));
-                          },
-                          child: DottedBorder(
-                            strokeWidth: 1,
-                            dashPattern: const [3, 3],
-                            borderType: BorderType.RRect,
-                            radius: const Radius.circular(15),
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                            child: const SizedBox(
-                              width: 55,
-                              height: 55,
-                              child: Icon(FontAwesomeIcons.plus),
-                            ),
-                          ),
-                        );
+                        return SizedBox.shrink();
                       }
                     } else {
                       return Center(
